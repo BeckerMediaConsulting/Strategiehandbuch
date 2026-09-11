@@ -1,0 +1,621 @@
+<meta charset="utf-8">
+<title>KURO Fahrplan</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+
+:root{
+  --paper:#ffffff;
+  --paper-alt:#f5f5f4;
+  --ink:#1d1d1b;
+  --ink-soft:#575756;
+  --line:#dcdcda;
+  --line-soft:#ececea;
+  --red:#e30613;
+  --red-dark:#b8050f;
+  --red-tint:#fdeceb;
+  --grey-chip:#f0f0ef;
+  --shadow: 0 1px 2px rgba(29,29,27,.04), 0 8px 24px -12px rgba(29,29,27,.12);
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--paper-alt);
+  color:var(--ink);
+  font-family:'IBM Plex Sans', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing:antialiased;
+  line-height:1.55;
+}
+h1,h2,h3,h4{
+  font-family:'Barlow Semi Condensed', 'Segoe UI', sans-serif;
+  text-transform:uppercase;
+  letter-spacing:.01em;
+  text-wrap:balance;
+  margin:0;
+  color:var(--ink);
+}
+p{margin:0;}
+.mono{font-family:'IBM Plex Mono','SFMono-Regular',monospace;}
+.wrap{max-width:920px;margin:0 auto;padding:0 28px;}
+img{display:block;}
+
+/* ---------- source tags ---------- */
+.tag{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;
+  padding:3px 8px;border-radius:20px;
+  background:var(--grey-chip);color:var(--ink-soft);
+  border:1px solid var(--line);
+  white-space:nowrap;
+}
+.tag.gespraech{background:var(--red-tint);color:var(--red-dark);border-color:#f6c8c9;}
+.tag.branchenwert{background:#eef1ec;color:#4c5a41;border-color:#d7e0cd;}
+.tag.recherche{background:#eef2f6;color:#3d5670;border-color:#d3dfe8;}
+
+/* ---------- nav ---------- */
+.jumpnav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line);
+}
+.jumpnav .wrap{
+  display:flex;align-items:center;gap:14px;
+  padding:10px 28px;overflow-x:auto;
+}
+.jumpnav .brand{
+  display:flex;align-items:center;gap:8px;flex:0 0 auto;
+  padding-right:14px;border-right:1px solid var(--line);
+  font-family:'Barlow Semi Condensed';font-weight:700;font-size:14px;
+  letter-spacing:.04em;color:var(--ink);
+}
+.jumpnav .brand img{height:20px;width:auto;}
+.jumpnav a{
+  flex:0 0 auto;
+  display:flex;align-items:center;gap:7px;
+  font-size:12.5px;color:var(--ink-soft);text-decoration:none;
+  padding:5px 3px;
+}
+.jumpnav a .num{
+  display:flex;align-items:center;justify-content:center;
+  width:19px;height:19px;border-radius:50%;
+  border:1px solid var(--line);font-family:'IBM Plex Mono';font-size:10px;
+  color:var(--ink-soft);
+}
+.jumpnav a:hover{color:var(--red);}
+.jumpnav a:hover .num{border-color:var(--red);color:var(--red);}
+
+/* ---------- hero ---------- */
+.hero{position:relative;background:var(--ink);color:#fff;overflow:hidden;}
+.hero-img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:.34;
+}
+.hero-scrim{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg, rgba(29,29,27,.55) 0%, rgba(29,29,27,.88) 65%, var(--ink) 100%);
+}
+.hero-inner{position:relative;padding:44px 0 34px;}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+  color:#f2c9cb;background:rgba(227,6,19,.16);border:1px solid rgba(227,6,19,.4);
+  padding:6px 12px;border-radius:20px;margin-bottom:22px;
+}
+.hero h1{font-size:clamp(32px,5vw,46px);font-weight:800;line-height:1.05;color:#fff;max-width:14ch;}
+.hero .sub{margin-top:14px;font-size:16px;color:#d9d9d7;max-width:52ch;}
+.meta-row{
+  margin-top:32px;display:grid;grid-template-columns:repeat(3,1fr);
+  border:1px solid rgba(255,255,255,.18);border-radius:10px;overflow:hidden;
+}
+.meta-row .cell{padding:16px 18px;border-right:1px solid rgba(255,255,255,.18);}
+.meta-row .cell:last-child{border-right:none;}
+.meta-row .k{font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:#b7b7b5;}
+.meta-row .v{margin-top:5px;font-size:15.5px;font-weight:600;color:#fff;}
+.persona{
+  margin-top:28px;display:flex;align-items:center;gap:12px;
+}
+.persona .avatar{
+  width:42px;height:42px;border-radius:50%;
+  background:var(--red);display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Semi Condensed';font-weight:700;color:#fff;font-size:17px;
+  flex:0 0 auto;
+}
+.persona .who{font-size:14px;color:#fff;font-weight:600;}
+.persona .role{font-size:12.5px;color:#b7b7b5;}
+
+/* ---------- sections ---------- */
+section{padding:56px 0;border-bottom:1px solid var(--line-soft);}
+section:last-of-type{border-bottom:none;}
+.eyebrow{
+  display:flex;align-items:center;gap:11px;margin-bottom:16px;
+}
+.eyebrow .step{
+  width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono';font-size:13px;flex:0 0 auto;
+}
+.eyebrow .label{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);}
+h2.sec-title{font-size:clamp(24px,3.4vw,32px);font-weight:800;margin-bottom:6px;}
+.sec-intro{margin-top:14px;font-size:15.5px;color:var(--ink-soft);max-width:62ch;}
+
+/* quote blocks */
+.quote-block{
+  border-left:3px solid var(--red);
+  padding:4px 0 4px 18px;margin:20px 0;
+}
+.quote-block p{font-style:italic;font-size:16.5px;color:var(--ink);}
+.quote-block .attr{
+  margin-top:8px;font-family:'IBM Plex Mono';font-size:11px;color:var(--ink-soft);
+  font-style:normal;text-transform:uppercase;letter-spacing:.03em;
+}
+
+/* finding tiles */
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:22px;}
+.findingbox{
+  background:var(--paper);border:1px solid var(--line);border-radius:10px;
+  padding:16px 18px;box-shadow:var(--shadow);
+}
+.findingbox .ico{
+  width:30px;height:30px;border-radius:8px;background:var(--red-tint);
+  display:flex;align-items:center;justify-content:center;margin-bottom:10px;
+}
+.findingbox .ico svg{width:16px;height:16px;stroke:var(--red-dark);}
+.findingbox h4{font-size:14.5px;font-weight:700;text-transform:none;letter-spacing:0;margin-bottom:5px;}
+.findingbox p{font-size:13.5px;color:var(--ink-soft);}
+
+/* segmentation bar */
+.segbar-wrap{margin-top:26px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:22px 22px 18px;box-shadow:var(--shadow);}
+.segbar-wrap .cap{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;}
+.segbar{display:flex;height:38px;border-radius:8px;overflow:hidden;}
+.segbar .seg{display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono';font-size:12px;font-weight:500;color:#fff;}
+.seg-legend{display:flex;gap:22px;margin-top:14px;flex-wrap:wrap;}
+.seg-legend .li{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-soft);}
+.seg-legend .sw{width:10px;height:10px;border-radius:2px;flex:0 0 auto;}
+
+/* full-vollzeitstelle quote callout */
+.callout-strong{
+  margin-top:20px;background:var(--ink);color:#fff;border-radius:12px;
+  padding:22px 24px;display:flex;gap:16px;align-items:flex-start;
+}
+.callout-strong .num{font-family:'Barlow Semi Condensed';font-weight:800;font-size:34px;color:var(--red);line-height:1;flex:0 0 auto;}
+.callout-strong p{font-size:14.5px;color:#e5e5e3;}
+.callout-strong .attr{margin-top:6px;font-family:'IBM Plex Mono';font-size:10.5px;color:#9a9a97;text-transform:uppercase;}
+
+/* two-path comparison */
+.paths{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px;}
+.path{border-radius:12px;padding:18px 18px 16px;border:1px solid var(--line);background:var(--paper);box-shadow:var(--shadow);}
+.path.bad{border-color:#e9c9c9;background:#fdf6f6;}
+.path .ptitle{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);}
+.path h4{margin-top:6px;font-size:19px;font-weight:700;text-transform:none;letter-spacing:0;}
+.path ul{margin:14px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px;}
+.path li{font-size:13.5px;color:var(--ink-soft);padding-left:16px;position:relative;}
+.path.bad li::before{content:"–";position:absolute;left:0;color:#c65656;font-weight:700;}
+.path.good li::before{content:"✓";position:absolute;left:0;color:var(--red);font-weight:700;}
+.path.good{border-color:#f0d3d3;}
+
+/* coverage compare bars */
+.coverage{margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:var(--shadow);}
+.cov-row{display:grid;grid-template-columns:150px 1fr 74px;align-items:center;gap:14px;margin-top:14px;}
+.cov-row:first-of-type{margin-top:6px;}
+.cov-row .lbl{font-size:13px;font-weight:600;}
+.cov-track{height:16px;background:var(--grey-chip);border-radius:20px;overflow:hidden;}
+.cov-fill{height:100%;border-radius:20px;}
+.cov-row .val{font-family:'IBM Plex Mono';font-size:13px;text-align:right;color:var(--ink-soft);}
+.cov-note{margin-top:14px;font-size:12.5px;color:var(--ink-soft);}
+
+.punch{margin-top:20px;text-align:left;}
+.punch p{font-family:'Barlow Semi Condensed';font-weight:700;font-size:20px;text-transform:none;letter-spacing:0;color:var(--ink);}
+.punch .attr{margin-top:5px;font-family:'IBM Plex Mono';font-size:11px;color:var(--ink-soft);text-transform:uppercase;}
+
+/* flow steps */
+.flow{margin-top:26px;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+.fstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:18px 20px;border-top:1px solid var(--line-soft);}
+.fstep:first-child{border-top:none;}
+.fn{
+  width:30px;height:30px;border-radius:50%;background:var(--red-tint);color:var(--red-dark);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono';font-weight:500;font-size:13px;
+}
+.fbody h4{font-size:14.5px;font-weight:700;text-transform:none;letter-spacing:0;}
+.fbody p{margin-top:5px;font-size:13.5px;color:var(--ink-soft);}
+
+/* package card */
+.pkg{
+  margin-top:26px;background:var(--ink);color:#fff;border-radius:16px;
+  padding:30px 30px 26px;
+}
+.pkg-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+.pkg-name{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#f2c9cb;}
+.pkg h3{margin-top:8px;font-size:24px;color:#fff;}
+.pkg-price{text-align:right;}
+.pkg-price .amt{font-family:'Barlow Semi Condensed';font-weight:800;font-size:36px;color:#fff;}
+.pkg-price .per{font-family:'IBM Plex Mono';font-size:11px;color:#b7b7b5;}
+.pkg-grid{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:9px 24px;}
+.pkg-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid rgba(255,255,255,.12);}
+.pkg-item svg{width:14px;height:14px;stroke:var(--red);flex:0 0 auto;margin-top:3px;}
+.pkg-item span{font-size:13.5px;color:#e5e5e3;}
+.pkg-foot{margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);display:flex;gap:22px;flex-wrap:wrap;}
+.pkg-foot .f{font-size:12.5px;color:#b7b7b5;}
+.pkg-foot .f b{color:#fff;font-weight:600;}
+.split-note{
+  margin-top:14px;display:flex;gap:10px;background:var(--red-tint);border:1px solid #f6c8c9;
+  border-radius:10px;padding:13px 16px;
+}
+.split-note svg{width:16px;height:16px;stroke:var(--red-dark);flex:0 0 auto;margin-top:1px;}
+.split-note p{font-size:13px;color:var(--red-dark);}
+
+/* result stats */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px;}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 18px 16px;box-shadow:var(--shadow);}
+.stat .big{font-family:'Barlow Semi Condensed';font-weight:800;font-size:28px;color:var(--red);}
+.stat .lbl{margin-top:4px;font-size:12.5px;color:var(--ink-soft);}
+.funnel{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fcard{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+.fcard .flabel{font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--red-dark);}
+.fcard h4{margin-top:8px;font-size:16px;font-weight:700;text-transform:none;letter-spacing:0;}
+.fcard p{margin-top:6px;font-size:13px;color:var(--ink-soft);}
+
+.refbox{
+  margin-top:22px;display:flex;gap:16px;align-items:center;background:var(--paper);
+  border:1px solid var(--line);border-radius:12px;padding:16px 20px;box-shadow:var(--shadow);
+}
+.refbox img{width:64px;height:64px;border-radius:8px;object-fit:cover;flex:0 0 auto;}
+.refbox p{font-size:13.5px;color:var(--ink-soft);}
+.refbox b{color:var(--ink);}
+
+/* next step */
+.agenda{margin-top:24px;display:flex;flex-direction:column;gap:0;}
+.aitem{display:flex;gap:16px;align-items:center;padding:14px 0;border-top:1px solid var(--line);}
+.aitem:last-child{border-bottom:1px solid var(--line);}
+.aitem .n{
+  font-family:'Barlow Semi Condensed';font-weight:800;font-size:20px;color:var(--red);
+  width:28px;flex:0 0 auto;
+}
+.aitem span{font-size:14.5px;font-weight:500;}
+.closing{
+  margin-top:28px;background:var(--ink);color:#fff;border-radius:16px;
+  padding:28px 30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;
+}
+.closing .when .k{font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:#b7b7b5;}
+.closing .when .v{margin-top:6px;font-size:22px;font-weight:800;font-family:'Barlow Semi Condensed';}
+.closing .contact{text-align:right;}
+.closing .contact .name{font-weight:700;font-size:15px;}
+.closing .contact .co{font-size:12.5px;color:#b7b7b5;margin-top:3px;}
+.closing .contact a{color:#f2c9cb;font-size:12.5px;text-decoration:none;}
+
+footer{padding:26px 0 40px;text-align:center;}
+footer p{font-size:11.5px;color:#a9a9a6;font-family:'IBM Plex Mono';}
+
+@media (max-width:680px){
+  .tiles,.paths,.funnel,.pkg-grid,.stat-row{grid-template-columns:1fr;}
+  .meta-row{grid-template-columns:1fr;}
+  .meta-row .cell{border-right:none;border-bottom:1px solid rgba(255,255,255,.18);}
+  .cov-row{grid-template-columns:100px 1fr 60px;}
+  .closing{flex-direction:column;align-items:flex-start;}
+  .closing .contact{text-align:left;}
+}
+</style>
+
+<nav class="jumpnav">
+  <div class="wrap">
+    <div class="brand"><img src="images/logo.svg" alt="KURO"/> Fahrplan</div>
+    <a href="#stehen"><span class="num">1</span>Wo Sie stehen</a>
+    <a href="#diagnose"><span class="num">2</span>Diagnose</a>
+    <a href="#folge"><span class="num">3</span>Kosten der Verzögerung</a>
+    <a href="#loesung"><span class="num">4</span>Fahrplan</a>
+    <a href="#leistungen"><span class="num">5</span>Leistungen</a>
+    <a href="#ergebnis"><span class="num">6</span>Ergebnis</a>
+    <a href="#naechster"><span class="num">7</span>Nächster Schritt</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <img class="hero-img" src="images/hero.jpg" alt=""/>
+  <div class="hero-scrim"></div>
+  <div class="wrap hero-inner">
+    <div class="hero-badge">Persönlich erstellt im Anschluss an unser Gespräch</div>
+    <h1>Digitaler Fahrplan für KURO Kunststoffe</h1>
+    <p class="sub">Employer Branding &amp; Mitarbeitergewinnung auf Instagram, Facebook, TikTok, YouTube Shorts &amp; der LinkedIn-Unternehmensseite – planbar, kontinuierlich, ohne dass es an einer Person allein hängt.</p>
+
+    <div class="meta-row">
+      <div class="cell"><div class="k">Fokus</div><div class="v">Fachkräfte &amp; Azubis</div></div>
+      <div class="cell"><div class="k">Region</div><div class="v">Edewecht / Ammerland</div></div>
+      <div class="cell"><div class="k">Nächster Termin</div><div class="v">Do. 24.09.2026, 10:00</div></div>
+    </div>
+
+    <div class="persona">
+      <div class="avatar">NB</div>
+      <div>
+        <div class="who">Noah Becker</div>
+        <div class="role">Ihr Ansprechpartner · Becker Media &amp; Consulting</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- 1 WO SIE STEHEN -->
+  <section id="stehen">
+    <div class="wrap">
+      <div class="eyebrow"><div class="step">1</div><div class="label">Wo Sie stehen</div></div>
+      <h2 class="sec-title">Eine gute Basis – auf den Schultern einer Person</h2>
+      <p class="sec-intro">Über 1.000 Follower auf der LinkedIn-Unternehmensseite, knapp 500 auf Instagram – für ein B2B-Produkt, das der Endverbraucher nie zu Gesicht bekommt, ist das eine echte Leistung. <span class="tag gespraech">Aus eurem Gespräch</span></p>
+
+      <div class="quote-block">
+        <p>„Ich mache tatsächlich alles.“</p>
+        <div class="attr">Setting-Call — zum Thema Arbeitsteilung Social Media</div>
+      </div>
+      <div class="quote-block">
+        <p>„Man ist ja seine eigene Bubble irgendwie gefangen und kriegt immer gar nicht so richtig viel mit.“</p>
+        <div class="attr">Setting-Call — zum Thema Content-Abdeckung im Unternehmen</div>
+      </div>
+      <div class="quote-block">
+        <p>„Uns fehlt Kontinuität auf jeden Fall.“</p>
+        <div class="attr">Setting-Call — zum Thema Postingrhythmus</div>
+      </div>
+
+      <div class="tiles">
+        <div class="findingbox">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zM12 6v6l4 2"/></svg></div>
+          <h4>Ein Kopf für alles</h4>
+          <p>Planung, Dreh, Schnitt und Posting laufen über eine Person – neben dem eigentlichen HR-Job.</p>
+        </div>
+        <div class="findingbox">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></div>
+          <h4>TikTok gestartet, dann eingeschlafen</h4>
+          <p>Aus Zeitmangel ist der Kanal wieder untergegangen, bevor er Reichweite aufbauen konnte.</p>
+        </div>
+        <div class="findingbox">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M17 11a4 4 0 100-8M1 21v-2a4 4 0 014-4h4a4 4 0 014 4v2M23 21v-2a4 4 0 00-3-3.87"/></svg></div>
+          <h4>Kabelschutz bleibt stumm</h4>
+          <p>Content aus einzelnen Fachbereichen zu bekommen, gelingt kaum – Themen und Bilder fehlen.</p>
+        </div>
+        <div class="findingbox">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div>
+          <h4>Standardstellen ja, Fachstellen schwierig</h4>
+          <p>Ein Schild an der Straße bringt Bewerbungen – bei einzelnen Fachpositionen reicht das nicht.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 DIAGNOSE -->
+  <section id="diagnose">
+    <div class="wrap">
+      <div class="eyebrow"><div class="step">2</div><div class="label">Diagnose</div></div>
+      <h2 class="sec-title">Warum „nebenbei“ strukturell nicht reicht</h2>
+      <p class="sec-intro">Ideenfindung, Skript, Dreh, Schnitt, Planung und tägliche Betreuung der Kanäle sind sechs unterschiedliche Aufgaben. Dauerhaft und in guter Qualität abgedeckt, ist das kein Nebenprojekt mehr.</p>
+
+      <div class="callout-strong">
+        <div class="num">2–3</div>
+        <div>
+          <p>„Das sind zwei bis drei Vollzeitstellen, wenn man die einzelnen Bereiche da sauber abdecken möchte.“ So viel Kapazität braucht es, Content-Planung, Produktion, Postproduktion und Community-Management dauerhaft sauber zu trennen.</p>
+          <div class="attr">Aus eurem Gespräch</div>
+        </div>
+      </div>
+
+      <div class="segbar-wrap">
+        <div class="cap">
+          <h4 style="font-size:14px;text-transform:none;letter-spacing:0;font-weight:700;">Wen sporadisches Posten erreicht – und wen nicht</h4>
+          <span class="tag branchenwert">Branchenwert</span>
+        </div>
+        <div class="segbar">
+          <div class="seg" style="width:15%;background:#8b8b89;">15%</div>
+          <div class="seg" style="width:45%;background:var(--red);">45%</div>
+          <div class="seg" style="width:40%;background:#d6d6d3;color:#575756;">40%</div>
+        </div>
+        <div class="seg-legend">
+          <div class="li"><span class="sw" style="background:#8b8b89;"></span>Aktiv suchend – findet euch auch bei seltenen Posts</div>
+          <div class="li"><span class="sw" style="background:var(--red);"></span>Latent wechselbereit – nur über regelmäßige Sichtbarkeit erreichbar</div>
+          <div class="li"><span class="sw" style="background:#d6d6d3;"></span>Aktuell nicht wechselbereit</div>
+        </div>
+      </div>
+      <p class="sec-intro" style="margin-top:16px;">Die größte Gruppe potenzieller Kandidat:innen sucht gerade nicht aktiv – sie muss KURO immer wieder im Feed sehen, um beim eigenen Wechselgedanken an das Unternehmen zu denken. Das schafft nur ein fester Rhythmus, kein Post alle paar Wochen.</p>
+    </div>
+  </section>
+
+  <!-- 3 FOLGE -->
+  <section id="folge">
+    <div class="wrap">
+      <div class="eyebrow"><div class="step">3</div><div class="label">Kosten der Verzögerung</div></div>
+      <h2 class="sec-title">Was es kostet, das Thema nicht auszubauen</h2>
+      <p class="sec-intro">Es gibt praktisch drei Wege. Zwei davon kosten etwas und ändern trotzdem nichts an der Kontinuität – nur einer liefert auch die volle Kapazität dafür.</p>
+
+      <div class="paths">
+        <div class="path bad">
+          <div class="ptitle">Weg A</div>
+          <h4>Alles bleibt, wie es ist</h4>
+          <ul>
+            <li>Keine zusätzlichen Kosten, aber auch kein zusätzlicher Fortschritt</li>
+            <li>Posting bleibt sporadisch – je nachdem, wie viel Zeit gerade neben der HR-Arbeit bleibt</li>
+            <li>Reichweite und Bewerberzahlen verändern sich nicht von selbst</li>
+            <li>Einzelne Fachstellen bleiben weiterhin schwer zu besetzen</li>
+          </ul>
+        </div>
+        <div class="path bad">
+          <div class="ptitle">Weg B</div>
+          <h4>Zusätzliche interne Stelle</h4>
+          <ul>
+            <li>Mit Lohnnebenkosten fast doppelt so teuer wie das externe Paket</li>
+            <li>Einarbeitungszeit, bevor die Person eigenständig produziert</li>
+            <li>Urlaub, Krankheitstage, irgendwann auch Fluktuation</li>
+            <li>Copywriting, Dreh, Schnitt und Planung müssten trotzdem neu aufgebaut werden</li>
+          </ul>
+        </div>
+        <div class="path good">
+          <div class="ptitle">Weg C</div>
+          <h4>Becker Media &amp; Consulting</h4>
+          <ul>
+            <li>Eingespieltes Team, das die Abläufe aus über 40 Kunden bereits kennt</li>
+            <li>Feste monatliche Rate, keine Lohnnebenkosten, keine Einarbeitungszeit</li>
+            <li>Kein Urlaub, kein Krankenstand, kein Ausfall im Produktionsplan</li>
+            <li>Planung, Dreh, Postproduktion und Redaktionsplan komplett abgedeckt</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="coverage">
+        <div class="cov-row" style="margin-top:0;">
+          <div class="lbl">Becker Media</div>
+          <div class="cov-track"><div class="cov-fill" style="width:100%;background:var(--red);"></div></div>
+          <div class="val">3,0 / 3 Mon.</div>
+        </div>
+        <div class="cov-row">
+          <div class="lbl">Neue Vollzeitkraft</div>
+          <div class="cov-track"><div class="cov-fill" style="width:83%;background:#b7b7b5;"></div></div>
+          <div class="val">≈ 2,5 / 3 Mon.</div>
+        </div>
+        <div class="cov-row">
+          <div class="lbl">Status quo</div>
+          <div class="cov-track"><div class="cov-fill" style="width:0%;background:#c65656;"></div></div>
+          <div class="val">0 / 3 Mon.</div>
+        </div>
+        <p class="cov-note"><span class="tag branchenwert">Branchenwert</span>&nbsp; Effektive, produktive Arbeitszeit über 3 Monate: bei einer neuen Stelle nach Einarbeitung sowie anteiligem Urlaub/Krankenstand, beim Status quo ohne zusätzliche Kapazität für Kontinuität – zur Einordnung, nicht als exakter KURO-Wert.</p>
+      </div>
+
+      <div class="punch">
+        <p>„Günstiger und mit einem besseren Ergebnis kommen Sie eigentlich nicht weg – wir haben keinen Urlaub, machen nicht frei und werden nicht krank.“</p>
+        <div class="attr">Aus eurem Gespräch</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 LÖSUNG -->
+  <section id="loesung">
+    <div class="wrap">
+      <div class="eyebrow"><div class="step">4</div><div class="label">Fahrplan</div></div>
+      <h2 class="sec-title">So läuft die Zusammenarbeit an</h2>
+      <p class="sec-intro">Vor dem Start planen wir die kompletten 8 Wochen direkt durch – Themen, Drehtag und Umsetzung stehen fest, bevor es losgeht. Danach wiederholt sich der Zyklus, organisch und in festem Rhythmus.</p>
+
+      <div class="flow">
+        <div class="fstep">
+          <div class="fn">1</div>
+          <div class="fbody"><h4>Kickoff-Brainstorming</h4><p>Themen, offene Stellen und Ideen für die kommenden 8 Wochen werden gemeinsam festgelegt – bevor der erste Drehtag stattfindet.</p></div>
+        </div>
+        <div class="fstep">
+          <div class="fn">2</div>
+          <div class="fbody"><h4>Content-Drehtag vor Ort</h4><p>8 Videos plus Fotomaterial für Cover, Stories und Grafiken – an einem Produktionstag.</p></div>
+        </div>
+        <div class="fstep">
+          <div class="fn">3</div>
+          <div class="fbody"><h4>Postproduktion &amp; Redaktionsplan</h4><p>Schnitt, Sounddesign, Color Grading. Fertiger Redaktionsplan (PDF) mit Datum, Plattform und Caption für alle 8 Wochen.</p></div>
+        </div>
+        <div class="fstep">
+          <div class="fn">4</div>
+          <div class="fbody"><h4>KURO übernimmt Posting</h4><p>Hochladen, Kommentare und Community-Management bleiben bei Frau Dierks – Verwaltung wie gewünscht im Haus.</p></div>
+        </div>
+        <div class="fstep">
+          <div class="fn">5</div>
+          <div class="fbody"><h4>Wiederholung alle 8 Wochen</h4><p>Der Zyklus beginnt von vorn, Themen werden nachgeschärft, sobald sich die Zusammenarbeit eingespielt hat.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 LEISTUNGEN -->
+  <section id="leistungen">
+    <div class="wrap">
+      <div class="eyebrow"><div class="step">5</div><div class="label">Leistungen im Detail</div></div>
+      <h2 class="sec-title">Ein Paket, klar aufgeteilt</h2>
+      <p class="sec-intro">Genau das besprochene 8-Videos-Paket – Produktion und Planung bei uns, Verwaltung der Kanäle bei KURO.</p>
+
+      <div class="pkg">
+        <div class="pkg-top">
+          <div>
+            <div class="pkg-name">Social-Media-Paket</div>
+            <h3>8 Videos / Monat</h3>
+          </div>
+          <div class="pkg-price">
+            <div class="amt">2.500 €</div>
+            <div class="per">pro Monat <span class="tag gespraech" style="vertical-align:1px;">Aus eurem Gespräch</span></div>
+          </div>
+        </div>
+
+        <div class="pkg-grid">
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Alle 8 Wochen: Brainstorming-Call (30–45 Min.)</span></div>
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Alle 8 Wochen: Content-Drehtag vor Ort</span></div>
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Komplette Postproduktion (Schnitt, Sound, Color Grading)</span></div>
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Contentplanung &amp; Redaktionsplan (PDF) durch uns</span></div>
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>Für Instagram, Facebook, TikTok, YouTube Shorts &amp; die LinkedIn-Unternehmensseite</span></div>
+          <div class="pkg-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span>100 km Anfahrt inklusive, danach normale km-Pauschale</span></div>
+        </div>
+
+        <div class="split-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <p>Posting, Kommentare &amp; Community-Management: Frau Dierks / KURO – die Verwaltung der Accounts bleibt bewusst im Haus.</p>
+        </div>
+
+        <div class="pkg-foot">
+          <div class="f"><b>3 Monate</b> Testzeit</div>
+          <div class="f">danach <b>Jahresvertrag</b> mit Ausstiegsoption nach 6 Monaten</div>
+          <div class="f">keine Setup-Gebühr, keine versteckten Kosten</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 ERGEBNIS -->
+  <section id="ergebnis">
+    <div class="wrap">
+      <div class="eyebrow"><div class="step">6</div><div class="label">Ergebnis</div></div>
+      <h2 class="sec-title">Was sich für Frau Dierks konkret ändert</h2>
+
+      <div class="stat-row">
+        <div class="stat"><div class="big">8</div><div class="lbl">Videos / Monat, statt sporadischer Posts</div></div>
+        <div class="stat"><div class="big">0h</div><div class="lbl">eigene Zeit für Dreh, Schnitt &amp; Planung</div></div>
+        <div class="stat"><div class="big">5</div><div class="lbl">Kanäle durchgängig bespielt statt teilweise brach</div></div>
+      </div>
+
+      <div class="funnel">
+        <div class="fcard">
+          <div class="flabel">Top of Funnel</div>
+          <h4>Markenbekanntheit</h4>
+          <p>Leichtere, auch mal humorvolle Inhalte holen Menschen überhaupt erst aufs Profil – Reichweite statt Stille.</p>
+        </div>
+        <div class="fcard">
+          <div class="flabel">Middle of Funnel</div>
+          <h4>Vom Profil zur Bewerbung</h4>
+          <p>Testimonial-Formate wie „ich wusste nicht, was ich machen sollte“ zeigen echten Alltag – und konvertieren gezielt zu Bewerbungen. <span class="tag gespraech">Aus eurem Gespräch</span></p>
+        </div>
+      </div>
+
+      <div class="refbox">
+        <img src="images/impression1.jpg" alt=""/>
+        <p><b>Referenz Herborner Pumpen</b> – vergleichbares Employer-Branding-Setup: Instagram-Follower mehr als verdoppelt, über 1 Million Menschen organisch erreicht, LinkedIn-Unternehmensseite ebenfalls spürbar weiter ausgebaut. <span class="tag gespraech">Aus eurer Fallstudie</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 NÄCHSTER SCHRITT -->
+  <section id="naechster">
+    <div class="wrap">
+      <div class="eyebrow"><div class="step">7</div><div class="label">Nächster Schritt</div></div>
+      <h2 class="sec-title">Agenda für unser Gespräch</h2>
+
+      <div class="agenda">
+        <div class="aitem"><div class="n">1</div><span>Fahrplan &amp; Ablauf im Detail</span></div>
+        <div class="aitem"><div class="n">2</div><span>Ihre und Herrn Schwengels' Fragen</span></div>
+        <div class="aitem"><div class="n">3</div><span>Konditionen &amp; Start des ersten Content-Drehtags</span></div>
+      </div>
+
+      <div class="closing">
+        <div class="when">
+          <div class="k">Termin</div>
+          <div class="v">Do. 24.09.2026 · 10:00 Uhr</div>
+        </div>
+        <div class="contact">
+          <div class="name">Noah Becker</div>
+          <div class="co">Becker Media &amp; Consulting</div>
+          <a href="mailto:management@becker-media-consulting.de">management@becker-media-consulting.de</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Erstellt von Becker Media &amp; Consulting für KURO Kunststoffe GmbH — vertraulich</p>
+</footer>
