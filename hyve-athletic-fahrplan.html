@@ -1,0 +1,633 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fahrplan HYVE Athletic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* Kein Corporate-Design vorhanden (Neugründung, keine live Website/Social-Media-Präsenz auffindbar) -
+   Palette bewusst von "HYVE" (Bienenstock) abgeleitet: Honig-Gold auf Anthrazit/Off-White,
+   Platzhalter-Wortmarke statt echtem Logo. */
+:root{
+  --gold:#c8891f;
+  --gold-deep:#a06c14;
+  --ink:#1c1a17;
+  --charcoal:#221f1c;
+  --charcoal-deep:#141210;
+  --slate:#5c584f;
+  --paper:#ffffff;
+  --mist:#f6f4f1;
+  --mist-2:#f0ead9;
+  --line:#e4ded2;
+  --line-soft:#ece7db;
+  --good:#1f7a4d;
+  background:var(--paper);
+}
+*{box-sizing:border-box;min-width:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block;}
+h1,h2,h3{
+  font-family:"Oswald","Segoe UI",sans-serif;
+  font-weight:600;
+  letter-spacing:.2px;
+  text-wrap:balance;
+  color:var(--charcoal);
+  margin:0;
+}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;}
+.wrap{max-width:1080px;margin-inline:auto;padding-inline:20px;}
+a{color:inherit;}
+
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 24px;
+  border-bottom:1px solid var(--line);
+  flex-wrap:wrap;gap:12px;
+}
+.wordmark{display:flex;flex-direction:column;line-height:1;}
+.wordmark .w1{font-family:"Oswald",sans-serif;font-weight:700;font-size:26px;letter-spacing:.03em;color:var(--charcoal);}
+.wordmark .w1 span{color:var(--gold);}
+.wordmark .w2{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.32em;color:var(--slate);margin-top:3px;}
+.eyebrow-pill{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--gold-deep);
+  background:var(--mist-2);
+  border:1px solid var(--line);
+  padding:7px 14px;border-radius:999px;
+}
+
+.hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(120deg, var(--charcoal-deep) 0%, var(--charcoal) 55%, #2c2620 100%);
+  padding:64px 24px 44px;
+  color:#fff;
+}
+.hero .hexbg{position:absolute;inset:0;opacity:.16;pointer-events:none;}
+.hero-inner{max-width:1080px;margin-inline:auto;position:relative;}
+.hero h1{
+  color:#fff;
+  font-size:clamp(30px,4.6vw,46px);
+  line-height:1.1;
+  max-width:17ch;
+}
+.hero h1 em{color:var(--gold);font-style:normal;}
+.hero .sub{
+  margin-top:16px;
+  font-size:17px;
+  line-height:1.55;
+  color:#e9e4d8;
+  max-width:56ch;
+}
+.badge-made{
+  display:inline-flex;align-items:center;gap:8px;
+  margin-top:22px;
+  font-size:12.5px;font-weight:500;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.24);
+  padding:7px 13px;border-radius:999px;
+  color:#f1ede2;
+}
+.badge-made .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex:none;}
+
+.persona{
+  margin-top:30px;
+  display:inline-flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:14px;
+  padding:10px 16px 10px 10px;
+}
+.persona .avatar{
+  width:42px;height:42px;border-radius:50%;
+  background:linear-gradient(140deg,var(--gold),var(--gold-deep));
+  color:#20180a;display:flex;align-items:center;justify-content:center;
+  font-family:"Oswald",sans-serif;font-weight:700;font-size:15px;
+  flex:none;
+}
+.persona .who{font-size:13.5px;line-height:1.35;}
+.persona .who b{display:block;font-size:14.5px;}
+.persona .who span{color:#d8d2c2;}
+
+.meta-row{
+  max-width:1080px;margin:-34px auto 0;padding-inline:24px;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+  position:relative;z-index:2;
+}
+.meta-box{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:16px 18px;
+  box-shadow:0 12px 28px -18px rgba(20,18,16,.35);
+}
+.meta-box .lbl{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--slate);
+}
+.meta-box .val{margin-top:5px;font-family:"Oswald",sans-serif;font-weight:500;font-size:16.5px;color:var(--charcoal);}
+
+.jumpnav{
+  position:sticky;top:env(safe-area-inset-top,0px);
+  z-index:20;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+  margin-top:46px;
+}
+.jumpnav-inner{
+  max-width:1080px;margin-inline:auto;padding:10px 24px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+}
+@media (max-width:760px){
+  .jumpnav-inner{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .jumpnav-inner::-webkit-scrollbar{display:none;}
+  .jumpnav-inner a{flex:none;}
+}
+.jumpnav a{display:flex;align-items:center;gap:8px;text-decoration:none;font-size:12.5px;font-weight:500;color:var(--slate);}
+.jumpnav a .n{
+  width:20px;height:20px;border-radius:50%;
+  border:1.4px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;color:var(--gold-deep);
+  flex:none;
+}
+.jumpnav a:hover .n{background:var(--gold-deep);color:#fff;border-color:var(--gold-deep);}
+
+section{padding:56px 24px;}
+section.alt{background:var(--mist);}
+.section-head{max-width:680px;margin-bottom:34px;}
+.section-head .num{
+  font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-weight:600;color:var(--gold-deep);
+  letter-spacing:.08em;
+}
+.section-head h2{font-size:clamp(24px,3vw,32px);margin-top:6px;}
+.section-head p{color:var(--slate);margin-top:10px;font-size:15px;line-height:1.6;}
+
+.tilegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px;}
+.tile{
+  background:var(--paper);border:1px solid var(--line);border-radius:12px;
+  padding:18px;display:flex;flex-direction:column;gap:10px;
+}
+.tile .ic{
+  width:34px;height:34px;border-radius:9px;background:var(--mist-2);
+  color:var(--gold-deep);display:flex;align-items:center;justify-content:center;flex:none;
+}
+.tile .ic svg{width:18px;height:18px;}
+.tile .tt{font-family:"Oswald",sans-serif;font-weight:500;font-size:15.5px;color:var(--charcoal);}
+.tile .dd{font-size:13px;color:var(--slate);line-height:1.5;}
+
+.src{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;
+  letter-spacing:.04em;text-transform:uppercase;
+  padding:3px 9px;border-radius:999px;
+  border:1px solid var(--line);
+  color:var(--gold-deep);
+  background:var(--mist-2);
+}
+.src.research{color:var(--good);border-color:#cfe9db;background:#f0f9f3;}
+
+.findbox{margin-top:28px;display:flex;flex-direction:column;gap:14px;}
+.fb{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+.fb p{font-size:14.5px;line-height:1.6;color:var(--ink);}
+.fb .src{margin-top:10px;}
+
+.diag-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:start;margin-top:8px;}
+.diag-grid p{font-size:15px;line-height:1.7;color:var(--ink);}
+.diag-grid p + p{margin-top:14px;}
+.diag-findings{display:flex;flex-direction:column;gap:14px;}
+.finding{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+.finding .tt{font-family:"Oswald",sans-serif;font-size:14.5px;font-weight:500;color:var(--charcoal);margin-bottom:6px;}
+.finding .dd{font-size:13px;color:var(--slate);line-height:1.55;}
+.finding .src{margin-top:10px;}
+
+.pathgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px;}
+.pathcard{
+  border-radius:14px;padding:22px 20px;border:1px solid var(--line);background:var(--paper);
+  display:flex;flex-direction:column;gap:10px;
+}
+.pathcard .k{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--slate);letter-spacing:.06em;text-transform:uppercase;}
+.pathcard h3{font-size:17px;color:var(--charcoal);}
+.pathcard p{font-size:13.5px;color:var(--slate);line-height:1.6;}
+.pathcard.win{
+  border-color:var(--gold-deep);
+  background:linear-gradient(180deg,#fff,var(--mist-2));
+  box-shadow:0 18px 34px -22px rgba(160,108,20,.35);
+}
+.pathcard.win h3{color:var(--gold-deep);}
+
+.valuegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:10px;}
+.vtile{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;}
+.vtile .tt{font-family:"Oswald",sans-serif;font-size:14px;font-weight:500;color:var(--charcoal);}
+.vtile .dd{font-size:12.5px;color:var(--slate);margin-top:6px;line-height:1.5;}
+
+.pkggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px;align-items:stretch;}
+.pkg{
+  border:1px solid var(--line);border-radius:16px;background:var(--paper);
+  padding:24px 22px;display:flex;flex-direction:column;gap:14px;
+}
+.pkg.chosen{
+  border:2px solid var(--gold-deep);
+  box-shadow:0 20px 40px -24px rgba(160,108,20,.4);
+  position:relative;
+}
+.pkg .tag-chosen{
+  position:absolute;top:-13px;left:22px;background:var(--gold-deep);color:#fff;
+  font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 11px;border-radius:999px;font-family:"IBM Plex Mono",monospace;
+}
+.pkg h3{font-size:18px;}
+.pkg .vids{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--slate);letter-spacing:.04em;margin-top:2px;}
+.pkg .price{
+  font-family:"Oswald",sans-serif;font-weight:600;font-size:26px;color:var(--charcoal);
+  display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-top:4px;
+}
+.pkg .price .unit{font-family:"IBM Plex Sans",sans-serif;font-weight:400;font-size:12px;color:var(--slate);}
+.pkg ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;}
+.pkg li{display:flex;gap:9px;font-size:13px;line-height:1.5;color:var(--ink);}
+.pkg li svg{width:14px;height:14px;color:var(--gold-deep);flex:none;margin-top:2px;}
+
+.note{font-size:12.5px;color:var(--slate);background:var(--mist);border-radius:9px;padding:10px 12px;line-height:1.55;}
+.invcard .note{background:var(--mist-2);}
+.switchbox{
+  margin-top:22px;border:1.5px solid var(--gold-deep);background:var(--mist-2);border-radius:14px;
+  padding:18px 20px;display:flex;gap:14px;align-items:flex-start;
+}
+.switchbox .ic{width:32px;height:32px;border-radius:9px;background:var(--gold-deep);color:#fff;display:flex;align-items:center;justify-content:center;flex:none;}
+.switchbox .ic svg{width:16px;height:16px;}
+.switchbox h3{font-size:15px;color:var(--gold-deep);}
+.switchbox p{font-size:13.5px;color:var(--ink);margin-top:5px;line-height:1.6;}
+
+.result-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:32px;align-items:start;margin-top:8px;}
+.result-list{display:flex;flex-direction:column;gap:16px;}
+.result-item{display:flex;gap:14px;}
+.result-item .ic{
+  width:34px;height:34px;border-radius:9px;background:var(--charcoal);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;flex:none;
+}
+.result-item .ic svg{width:17px;height:17px;}
+.result-item h3{font-size:15.5px;color:var(--charcoal);}
+.result-item p{font-size:13.5px;color:var(--slate);margin-top:4px;line-height:1.55;}
+
+.invcard{border:1px solid var(--line);border-radius:14px;background:var(--paper);padding:22px;}
+.invcard h3{font-size:14px;font-family:"IBM Plex Mono",monospace;letter-spacing:.05em;text-transform:uppercase;color:var(--slate);font-weight:600;}
+.invrow{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line-soft);font-size:13.5px;}
+.invrow:last-of-type{border-bottom:none;}
+.invrow .l{color:var(--ink);}
+.invrow .v{font-family:"Oswald",sans-serif;color:var(--charcoal);font-weight:500;}
+
+.next-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:32px;margin-top:8px;}
+.agenda{display:flex;flex-direction:column;gap:14px;}
+.agenda-item{display:flex;gap:14px;align-items:flex-start;}
+.agenda-item .num{
+  width:28px;height:28px;border-radius:50%;border:1.5px solid var(--gold-deep);color:var(--gold-deep);
+  display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Mono",monospace;
+  font-size:12.5px;font-weight:600;flex:none;
+}
+.agenda-item p{font-size:14px;color:var(--ink);padding-top:3px;}
+.contactcard{
+  background:var(--charcoal);color:#fff;border-radius:16px;padding:26px;
+  display:flex;flex-direction:column;gap:14px;
+}
+.contactcard .when{font-family:"Oswald",sans-serif;font-size:18px;font-weight:500;line-height:1.4;}
+.contactcard .when .d{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;font-weight:600;}
+.contactcard hr{border:none;border-top:1px solid rgba(255,255,255,.2);margin:2px 0;}
+.contactcard .who b{display:block;font-size:14.5px;}
+.contactcard .who span{font-size:13px;color:#d8d2c2;}
+.contactcard a{text-decoration:underline;color:#fff;}
+
+footer.pagefoot{padding:30px 24px 46px;text-align:center;font-size:12px;color:var(--slate);}
+
+@media (max-width:760px){
+  .meta-row{grid-template-columns:1fr;margin-top:-24px;}
+  .tilegrid{grid-template-columns:1fr;}
+  .diag-grid{grid-template-columns:1fr;}
+  .pathgrid{grid-template-columns:1fr;}
+  .valuegrid{grid-template-columns:1fr 1fr;}
+  .pkggrid{grid-template-columns:1fr;}
+  .result-grid{grid-template-columns:1fr;}
+  .next-grid{grid-template-columns:1fr;}
+  .switchbox{flex-direction:column;}
+}
+</style>
+
+<div class="topbar">
+  <div class="wordmark">
+    <div class="w1">HY<span>VE</span></div>
+    <div class="w2">ATHLETIC</div>
+  </div>
+  <span class="eyebrow-pill">Digitaler Fahrplan</span>
+</div>
+
+<div class="hero">
+  <svg class="hexbg" viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" stroke="#c8891f" stroke-width="1">
+      <path d="M40 10 L70 27 L70 61 L40 78 L10 61 L10 27 Z"/>
+      <path d="M100 10 L130 27 L130 61 L100 78 L70 61 L70 27 Z"/>
+      <path d="M160 10 L190 27 L190 61 L160 78 L130 61 L130 27 Z"/>
+      <path d="M220 10 L250 27 L250 61 L220 78 L190 61 L190 27 Z"/>
+      <path d="M280 10 L310 27 L310 61 L280 78 L250 61 L250 27 Z"/>
+      <path d="M340 10 L370 27 L370 61 L340 78 L310 61 L310 27 Z"/>
+      <path d="M70 61 L100 78 L100 112 L70 129 L40 112 L40 78 Z"/>
+      <path d="M130 61 L160 78 L160 112 L130 129 L100 112 L100 78 Z"/>
+      <path d="M190 61 L220 78 L220 112 L190 129 L160 112 L160 78 Z"/>
+      <path d="M250 61 L280 78 L280 112 L250 129 L220 112 L220 78 Z"/>
+      <path d="M310 61 L340 78 L340 112 L310 129 L280 112 L280 78 Z"/>
+      <path d="M40 112 L70 129 L70 163 L40 180 L10 163 L10 129 Z"/>
+      <path d="M100 112 L130 129 L130 163 L100 180 L70 163 L70 129 Z"/>
+      <path d="M160 112 L190 129 L190 163 L160 180 L130 163 L130 129 Z"/>
+      <path d="M220 112 L250 129 L250 163 L220 180 L190 163 L190 129 Z"/>
+      <path d="M280 112 L310 129 L310 163 L280 180 L250 163 L250 129 Z"/>
+      <path d="M340 112 L370 129 L370 163 L340 180 L310 163 L310 129 Z"/>
+    </g>
+  </svg>
+  <div class="hero-inner">
+    <h1>Bevor die Tür aufgeht, muss die <em>Community</em> schon stehen.</h1>
+    <p class="sub">Wie HYVE Athletic ab jetzt organischen Content aufbaut, um zur Eröffnung am 1. April 2027 mit einer echten Zielgruppe statt bei null zu starten.</p>
+    <div class="persona">
+      <div class="avatar">NB</div>
+      <div class="who">
+        <b>Noah Becker</b>
+        <span>Ihr Ansprechpartner · Becker Media &amp; Consulting</span>
+      </div>
+    </div>
+    <div><span class="badge-made"><span class="dot"></span>Persönlich erstellt im Anschluss an unser Gespräch am 21.09.2026</span></div>
+  </div>
+</div>
+
+<div class="meta-row">
+  <div class="meta-box"><div class="lbl">Bezug Räume</div><div class="val">Mitte Dezember 2026</div></div>
+  <div class="meta-box"><div class="lbl">Eröffnung</div><div class="val">01.04.2027</div></div>
+  <div class="meta-box"><div class="lbl">Nächster Termin</div><div class="val">26.09.2026 · 11:00 Uhr</div></div>
+</div>
+
+<nav class="jumpnav">
+  <div class="jumpnav-inner">
+    <a href="#stehen"><span class="n">1</span>Wo Sie stehen</a>
+    <a href="#diagnose"><span class="n">2</span>Diagnose</a>
+    <a href="#folge"><span class="n">3</span>Folge</a>
+    <a href="#loesung"><span class="n">4</span>Pakete</a>
+    <a href="#ergebnis"><span class="n">5</span>Ergebnis</a>
+    <a href="#schritt"><span class="n">6</span>Nächster Schritt</a>
+  </div>
+</nav>
+
+<section id="stehen">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">01 · Wo Sie stehen</div>
+      <h2>Ein neuer Standort, gut sechs Monate bis zur Eröffnung</h2>
+      <p>Der Bezug der neuen Räumlichkeiten ist für Mitte Dezember 2026 vorgesehen, die Eröffnung für den 1. April 2027. Bis dahin entscheidet sich, ob HYVE Athletic mit einer wartenden Community startet – oder bei null.</p>
+    </div>
+
+    <div class="tilegrid">
+      <div class="tile">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg></div>
+        <div class="tt">Rund 6 Monate bis Eröffnung</div>
+        <div class="dd">Von heute bis zum 1. April 2027 bleibt ein enges, aber realistisches Zeitfenster.</div>
+      </div>
+      <div class="tile">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg></div>
+        <div class="tt">Bezug Mitte Dezember</div>
+        <div class="dd">Sobald die Räume übergeben sind, kann erstmals vor Ort produziert werden.</div>
+      </div>
+      <div class="tile">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg></div>
+        <div class="tt">Aktuell keine Reichweite</div>
+        <div class="dd">Für den neuen Standort ist bislang keine aufgebaute Zielgruppe oder Warteliste vorhanden.</div>
+      </div>
+    </div>
+
+    <div class="findbox">
+      <div class="fb">
+        <p>HYVE Athletic eröffnet einen neuen Gym-Standort in Langgöns. Der Bezug der Räumlichkeiten ist für Mitte Dezember 2026 geplant, die Eröffnung für den 1. April 2027.</p>
+        <div class="src">Aus Ihrem Gespräch</div>
+      </div>
+      <div class="fb">
+        <p>Für den neuen Standort ist derzeit keine öffentlich auffindbare Social-Media-Präsenz vorhanden – die Sichtbarkeit beginnt faktisch bei null.</p>
+        <div class="src research">Eigene Recherche</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="diagnose" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">02 · Diagnose</div>
+      <h2>Warum die Zeit vor der Eröffnung über den Start entscheidet</h2>
+    </div>
+
+    <div class="diag-grid">
+      <div>
+        <p>In der Fitnessbranche gilt eine klare Faustregel: Online-Marketing für eine Studio-Neueröffnung sollte 3 bis 6 Monate vor dem ersten Öffnungstag beginnen – idealerweise genau dann, wenn der Mietvertrag steht oder die Räume übergeben werden. Mit Bezug Mitte Dezember und Eröffnung am 1. April liegt HYVE Athletic exakt in diesem Fenster – wenn jetzt gestartet wird.</p>
+        <p>Der zweite Faktor ist Glaubwürdigkeit: Studios investieren oft viel in Geräte und Ausstattung, aber zu wenig in professionelles Bild- und Videomaterial. Wer die Bauphase, die Geräte und die Trainer nicht zeigt, wirkt beim Vorverkauf schnell unglaubwürdig – unabhängig davon, wie gut die Ausstattung tatsächlich ist.</p>
+      </div>
+      <div class="diag-findings">
+        <div class="finding">
+          <div class="tt">3–6 Monate Vorlauf sind Branchenstandard</div>
+          <div class="dd">Fachpublikationen der Fitnessbranche empfehlen, mit dem Online-Marketing zu beginnen, sobald der Mietvertrag unterschrieben bzw. der Bezug der Räume absehbar ist – nicht erst kurz vor der Eröffnung.</div>
+          <div class="src">Branchenwert · Quelle: BODYMEDIA Fachmagazin</div>
+        </div>
+        <div class="finding">
+          <div class="tt">Investition in Ausstattung braucht sichtbaren Content</div>
+          <div class="dd">Fehlt professionelles Foto-/Videomaterial, wirkt selbst ein hochwertig ausgestattetes Studio im Vorverkauf austauschbar und wenig vertrauenswürdig.</div>
+          <div class="src">Branchenwert · Quelle: BODYMEDIA Fachmagazin</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="valuegrid">
+      <div class="vtile">
+        <div class="tt">Bauphase als Spannungsaufbau</div>
+        <div class="dd">Der Umbau der Räume ab Dezember liefert natürlichen, authentischen Content vor dem ersten Öffnungstag.</div>
+      </div>
+      <div class="vtile">
+        <div class="tt">Gesichter statt Geräte</div>
+        <div class="dd">Trainer und Team sichtbar machen schafft vor der Eröffnung mehr Vertrauen als reine Geräte-Fotos.</div>
+      </div>
+      <div class="vtile">
+        <div class="tt">Warteliste parallel zur Produktion</div>
+        <div class="dd">Wer die Marke vor der Eröffnung schon kennt, meldet sich am ersten Tag an – nicht erst Wochen später.</div>
+      </div>
+      <div class="vtile">
+        <div class="tt">Klare statt komplizierte Angebote</div>
+        <div class="dd">Einfache, sofort verständliche Botschaften überzeugen beim Vorverkauf mehr als Rabattstaffeln.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="folge">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">03 · Folge, wenn nichts passiert</div>
+      <h2>Drei Wege bis zur Eröffnung</h2>
+    </div>
+
+    <div class="pathgrid">
+      <div class="pathcard">
+        <div class="k">Weg A</div>
+        <h3>Erst kurz vor der Eröffnung starten</h3>
+        <p>Die empfohlene Vorlaufzeit von 3–6 Monaten wird verpasst. Der Vorverkauf beginnt praktisch bei null, wenige Wochen vor dem Start.</p>
+      </div>
+      <div class="pathcard">
+        <div class="k">Weg B</div>
+        <h3>Content nebenbei selbst produzieren</h3>
+        <p>Bauphase, Personal und Eröffnungsvorbereitung binden bereits alle Kapazitäten – professioneller Content bleibt auf der Strecke.</p>
+      </div>
+      <div class="pathcard win">
+        <div class="k">Weg C</div>
+        <h3>Ab jetzt mit uns aufbauen</h3>
+        <p>Produktion startet mit dem Bezug der Räume im Dezember, sodass am 1. April bereits eine sichtbare Community steht.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="loesung" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">04 · Pakete im Detail</div>
+      <h2>Drei Pakete, ein Ziel: sichtbar sein, bevor die Tür aufgeht</h2>
+      <p>Alle drei Pakete umfassen die gleiche Grundbetreuung (Instagram, Facebook, TikTok &amp; YouTube Shorts) – der Unterschied liegt im monatlichen Produktionsumfang.</p>
+    </div>
+
+    <div class="pkggrid">
+      <div class="pkg">
+        <h3>Starter</h3>
+        <div class="vids">8 Videos / Monat</div>
+        <div class="price">1.950 € <span class="unit">netto/Mon.</span></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Account-Betreuung Instagram, Facebook, TikTok &amp; YouTube Shorts</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Beiträge &amp; Stories, Community-Interaktion Mo–Fr</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Drehtag vor Ort inkl. Schnitt, Colourgrading &amp; Sounddesign</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Insights-Analyse &amp; quartalsweises Auswertungsgespräch</li>
+        </ul>
+      </div>
+
+      <div class="pkg chosen">
+        <span class="tag-chosen">Gewähltes Paket</span>
+        <h3>Wachstum</h3>
+        <div class="vids">12 Videos / Monat</div>
+        <div class="price">2.750 € <span class="unit">netto/Mon.</span></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Onboarding-Call, Account-Design, Zielgruppenanalyse &amp; Strategie</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Beiträge &amp; Stories 2–4×/Woche, Community-Interaktion Mo–Fr</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>12–20 Fotos &amp; 12 Kurzvideos/Monat, 1× monatlich Drehtag vor Ort (3–4 Std.)</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Skript, Schnitt, Colourgrading, Sounddesign &amp; Animationen inklusive</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Content-Plan monatlich, 1× pro Quartal Auswertungsgespräch</li>
+        </ul>
+      </div>
+
+      <div class="pkg">
+        <h3>Premium</h3>
+        <div class="vids">20 Videos / Monat</div>
+        <div class="price">4.500 € <span class="unit">netto/Mon.</span></div>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Maximale Content-Frequenz für die intensive Vorverkaufsphase</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Mehrfache Drehtage &amp; erweiterte Content-Planung pro Monat</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Vollständige Post-Produktion inkl. Schnitt, Colour &amp; Sounddesign</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Engste Betreuungstaktung inkl. regelmäßiger Auswertung</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="switchbox">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4M3 12v-2a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 12v2a4 4 0 0 1-4 4H3"/></svg></div>
+      <div>
+        <h3>Wechseloption fest vereinbart</h3>
+        <p>HYVE Athletic hat während der Laufzeit nach 4 Monaten die Möglichkeit, auf das Starter-Paket (8 Videos, 1.950 €/Monat) zu wechseln. Ankündigung 4 Wochen im Vorfeld.</p>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:18px;">Aus Ihrem Angebot AG1461 · Vollständig itemisiert ist das gewählte Wachstum-Paket (2.750 € netto zzgl. 19 % USt (522,50 €) = 3.272,50 € brutto/Monat). Mindestlaufzeit 12 Monate, Kündigungsoption nach 6 Monaten, SEPA-Lastschrift. 10 % Bonus bei jährlicher, 5 % bei halbjährlicher Zahlung.</div>
+  </div>
+</section>
+
+<section id="ergebnis">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">05 · Ergebnis</div>
+      <h2>Was sich für HYVE Athletic bis zur Eröffnung ändert</h2>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-list">
+        <div class="result-item">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="3"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><circle cx="18" cy="8" r="2.3"/><path d="M15.5 21c.3-2.8 1.8-4.3 4-4.6"/></svg></div>
+          <div>
+            <h3>Community vor dem ersten Öffnungstag</h3>
+            <p>Wer HYVE Athletic vor der Eröffnung schon kennt, meldet sich am 1. April an – statt erst Wochen später aufmerksam zu werden.</p>
+          </div>
+        </div>
+        <div class="result-item">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg></div>
+          <div>
+            <h3>Sichtbarer Baufortschritt statt Blackbox</h3>
+            <p>Der Umbau der Räume ab Dezember wird zum Content, statt unsichtbar im Hintergrund zu passieren.</p>
+          </div>
+        </div>
+        <div class="result-item">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5l3 3"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <div>
+            <h3>Planbarer Aufwand, volle Flexibilität</h3>
+            <p>Ein Drehtag pro Monat, alles Weitere übernehmen wir – inklusive vereinbarter Wechseloption nach 4 Monaten.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="invcard">
+        <h3>Investition (netto)</h3>
+        <div class="invrow"><span class="l">Wachstum-Paket (gewählt)</span><span class="v">2.750 €/Mon.</span></div>
+        <div class="invrow"><span class="l">↳ nach 4 Monaten optional</span><span class="v">1.950 €/Mon.</span></div>
+        <div class="note" style="margin-top:14px;">Alle Beträge netto, zzgl. 19 % USt. Angebot AG1461, gültig bis 28.09.2026.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="schritt" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">06 · Nächster Schritt</div>
+      <h2>So geht es weiter</h2>
+    </div>
+
+    <div class="next-grid">
+      <div class="agenda">
+        <div class="agenda-item">
+          <div class="num">1</div>
+          <p>Angebot AG1461 im Detail besprechen, inkl. Wechseloption nach 4 Monaten</p>
+        </div>
+        <div class="agenda-item">
+          <div class="num">2</div>
+          <p>Startzeitpunkt mit dem Bezug der Räume Mitte Dezember abstimmen</p>
+        </div>
+        <div class="agenda-item">
+          <div class="num">3</div>
+          <p>Bei Zusage: digitale Unterschrift und Kickoff-Onboarding-Call</p>
+        </div>
+      </div>
+
+      <div class="contactcard">
+        <div class="when"><span class="d">Nächster Termin</span>Sa., 26.09.2026 · 11:00 Uhr</div>
+        <div style="font-size:12px;color:#d8d2c2;">Angebot gültig bis 28.09.2026</div>
+        <hr/>
+        <div class="who">
+          <b>Noah Becker</b>
+          <span>Becker Media &amp; Consulting</span>
+        </div>
+        <a href="mailto:management@becker-media-consulting.de">management@becker-media-consulting.de</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="pagefoot">Becker Media &amp; Consulting × HYVE Athletic GmbH — Digitaler Fahrplan, Stand 21.09.2026</footer>
