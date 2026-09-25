@@ -1,0 +1,423 @@
+<meta charset="utf-8">
+<title>Kostenübersicht — DiaSys Diagnostic Systems</title>
+<style>
+  :root {
+    --bg: #f3f6f9;
+    --bg-card: #ffffff;
+    --line: #dde4ec;
+    --text: #1c2733;
+    --text-muted: #52616f;
+    --text-faint: #8b98a4;
+    --navy: #021836;
+    --primary: #004e8f;
+    --primary-dim: #144c94;
+    --accent: #d99c00;
+    --accent-soft: #b98400;
+    --accent-dim: #fbeecb;
+    --tag-bg: #eaf1f8;
+    --good: #2f7a52;
+    --bad: #c8402e;
+  }
+  /* Bewusst nur ein Theme: bildet das reale CI von diasys-diagnostics.com ab —
+     Marine-Blau #004E8F / #144C94 + Gold-Akzent #D99C00 aus dem echten Logo übernommen. */
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: "Helvetica Neue", Arial, "Segoe UI", sans-serif;
+    line-height: 1.5; -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 1000px; margin: 0 auto; padding: 0 0 80px; }
+  .icon { width: 22px; height: 22px; stroke: var(--primary); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.7rem; color: var(--accent-soft); font-weight: 800; }
+  h1, h2, h3, h4 { text-wrap: balance; margin: 0; }
+
+  .topnav { position: sticky; top: 0; z-index: 20; background: var(--navy); border-bottom: 2px solid var(--accent); padding: 10px 40px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .topnav img { height: 40px; width: auto; display: block; border-radius: 4px; }
+  .jumplinks { display: flex; gap: 6px; flex-wrap: wrap; }
+  .jumplinks a { width: 27px; height: 27px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 800; color: #fff; text-decoration: none; }
+  .jumplinks a:hover { border-color: var(--accent); color: var(--accent); }
+
+  header.hero { position: relative; padding: 42px 40px 38px; border-bottom: 1px solid var(--line); background: var(--navy); }
+  .createdbadge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 7px 14px 7px 12px; font-size: 0.78rem; color: #dbe4ec; margin-bottom: 20px; }
+  h1.title { font-size: clamp(1.4rem, 2.8vw, 2.05rem); font-weight: 800; letter-spacing: -0.01em; margin-top: 10px; max-width: 38ch; color: #fff; }
+  .subtitle { margin-top: 10px; color: #c3d0dc; max-width: 68ch; font-size: 0.98rem; }
+
+  .metarow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 24px; }
+  @media (max-width: 700px) { .metarow { grid-template-columns: 1fr; } }
+  .metabox { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 13px 16px; }
+  .metabox .m-lbl { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: #9bb2c4; font-weight: 800; }
+  .metabox .m-val { margin-top: 6px; font-size: 0.9rem; font-weight: 700; color: #fff; }
+  .metabox .m-sub { font-size: 0.72rem; color: #9bb2c4; margin-top: 2px; }
+
+  .persona { display: flex; align-items: center; gap: 12px; margin-top: 22px; }
+  .persona .avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--accent); color: var(--navy); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.86rem; flex-shrink: 0; }
+  .persona .p-name { font-weight: 700; color: #fff; font-size: 0.9rem; }
+  .persona .p-role { font-size: 0.78rem; color: #b7c6d3; }
+
+  section { padding: 36px 40px; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: none; }
+  .section-head { margin-bottom: 20px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .section-head h2 { font-size: 1.2rem; font-weight: 800; margin-top: 4px; color: var(--navy); }
+  .section-note { margin-top: 8px; font-size: 0.8rem; color: var(--text-faint); max-width: 74ch; }
+
+  .tilegrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 760px) { .tilegrid { grid-template-columns: 1fr; } }
+  .tile { background: var(--bg-card); border: 1px solid var(--line); border-radius: 6px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .tile .t-icon { width: 38px; height: 38px; border-radius: 8px; background: var(--tag-bg); display: flex; align-items: center; justify-content: center; }
+  .tile h3 { font-size: 0.92rem; font-weight: 700; color: var(--navy); }
+  .tile p { margin: 0; font-size: 0.81rem; color: var(--text-muted); }
+
+  .quote-block { background: var(--bg-card); border-left: 3px solid var(--accent); border-radius: 6px; padding: 15px 18px; }
+  .quote-block p.qtext { font-size: 0.92rem; font-style: italic; color: var(--navy); margin: 0 0 8px; }
+  .quote-block .qattr { font-size: 0.73rem; color: var(--text-faint); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .quotes-wrap { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+
+  .srctag { display: inline-flex; align-items: center; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .srctag.transcript { color: var(--primary); background: var(--tag-bg); }
+  .srctag.offertag { color: var(--accent-soft); background: var(--accent-dim); }
+
+  /* Umfangs-Tabelle */
+  .scopetable { width: 100%; border-collapse: collapse; font-size: 0.83rem; background: var(--bg-card); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .scopetable th { text-align: left; background: var(--tag-bg); color: var(--navy); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 9px 14px; }
+  .scopetable td { padding: 8px 14px; border-top: 1px solid var(--line); color: var(--text-muted); }
+  .scopetable td.num, .scopetable th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .scopetable tr.total td { font-weight: 800; color: var(--navy); border-top: 2px solid var(--navy); }
+  .scope-two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 760px) { .scope-two { grid-template-columns: 1fr; } }
+
+  /* Positions-/Phasen-Tabelle */
+  .phase-block { margin-bottom: 18px; }
+  .phase-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 8px 4px; border-bottom: 2px solid var(--navy); margin-bottom: 4px; }
+  .phase-head h4 { font-size: 0.86rem; font-weight: 800; color: var(--navy); }
+  .phase-head .phase-meta { font-size: 0.74rem; color: var(--text-faint); white-space: nowrap; }
+  .postable { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .postable td { padding: 7px 4px; border-top: 1px solid var(--line); vertical-align: top; }
+  .postable td.pos { width: 26px; color: var(--text-faint); font-weight: 700; }
+  .postable td.desc b { color: var(--navy); }
+  .postable td.desc span { display: block; color: var(--text-muted); font-size: 0.76rem; margin-top: 2px; }
+  .postable td.hrs { width: 62px; text-align: right; color: var(--text-muted); white-space: nowrap; }
+  .postable td.price { width: 90px; text-align: right; font-weight: 700; color: var(--navy); white-space: nowrap; }
+
+  .totalbar { display: flex; justify-content: space-between; align-items: center; background: var(--navy); color: #fff; border-radius: 8px; padding: 16px 22px; margin-top: 8px; flex-wrap: wrap; gap: 10px; }
+  .totalbar .tb-lbl { font-size: 0.8rem; color: #b7c6d3; }
+  .totalbar .tb-val { font-size: 1.3rem; font-weight: 800; }
+  .totalbar .tb-val span { font-size: 0.72rem; color: #b7c6d3; font-weight: 500; }
+
+  .ratengrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; }
+  @media (max-width: 760px) { .ratengrid { grid-template-columns: 1fr 1fr; } }
+  .rate { background: var(--bg-card); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; text-align: center; }
+  .rate .r-pct { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
+  .rate .r-val { font-size: 0.78rem; color: var(--navy); font-weight: 700; margin-top: 2px; }
+  .rate .r-when { font-size: 0.68rem; color: var(--text-faint); margin-top: 4px; }
+
+  .offergrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .offergrid { grid-template-columns: 1fr; } }
+  .offer { background: var(--bg-card); border: 1px solid var(--line); border-radius: 10px; padding: 22px 20px; display: flex; flex-direction: column; gap: 12px; }
+  .offer .o-tag { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent-soft); font-weight: 800; }
+  .offer h3 { font-size: 1.02rem; font-weight: 800; color: var(--navy); }
+  .offer .o-price { font-size: 1.3rem; font-weight: 800; color: var(--navy); }
+  .offer .o-price span { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; }
+  .offer .o-price2 { font-size: 0.78rem; color: var(--text-muted); }
+  .offer ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .offer ul li { position: relative; font-size: 0.8rem; color: var(--text-muted); padding: 0 0 0 18px; }
+  .offer ul li::before { content: "✓"; position: absolute; left: 0; top: 0; color: var(--good); font-weight: 700; font-size: 0.72rem; }
+  .offer .o-note { font-size: 0.73rem; color: var(--text-faint); border-top: 1px solid var(--line); padding-top: 10px; }
+
+  .roadmap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; position: relative; }
+  @media (max-width: 900px) { .roadmap { grid-template-columns: 1fr; } }
+  .roadmap::before { content: ""; position: absolute; top: 20px; left: 10%; right: 10%; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent-dim)); }
+  @media (max-width: 900px) { .roadmap::before { display: none; } }
+  .rstep { position: relative; padding: 0 8px; text-align: center; }
+  @media (max-width: 900px) { .rstep { text-align: left; padding: 0 0 20px 40px; border-left: 2px solid var(--accent-dim); margin-left: 19px; } .rstep:last-child { border-left-color: transparent; } }
+  .rstep .node { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-card); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; position: relative; z-index: 1; }
+  @media (max-width: 900px) { .rstep .node { position: absolute; left: -20px; top: -2px; margin: 0; } }
+  .rstep .when { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent-soft); font-weight: 700; }
+  .rstep h3 { font-size: 0.82rem; font-weight: 700; margin: 4px 0 4px; color: var(--navy); }
+  .rstep p { margin: 0; font-size: 0.72rem; color: var(--text-muted); }
+
+  .exgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .exgrid { grid-template-columns: 1fr; } }
+  .exbox { background: var(--bg-card); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; }
+  .exbox h4 { font-size: 0.82rem; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .exbox ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .exbox ul li { position: relative; font-size: 0.78rem; color: var(--text-muted); padding: 0 0 0 16px; }
+  .exbox ul li::before { content: "–"; position: absolute; left: 0; top: 0; color: var(--bad); font-weight: 700; }
+
+  .findingbox { background: var(--bg-card); border: 1px solid var(--line); border-left: 3px solid var(--navy); border-radius: 6px; padding: 14px 18px; margin-bottom: 12px; display: flex; gap: 12px; align-items: flex-start; }
+  .findingbox .f-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--tag-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .findingbox p { margin: 0; font-size: 0.86rem; color: var(--navy); }
+  .findingbox .qattr { margin-top: 4px; font-size: 0.72rem; color: var(--text-faint); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .nextmeet { background: var(--navy); color: #fff; border-radius: 8px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; font-size: 0.9rem; margin-bottom: 18px; }
+  .nextmeet b { font-weight: 800; color: var(--accent); }
+  .agenda { list-style: none; margin: 0 0 20px; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .agenda li { display: flex; gap: 12px; align-items: flex-start; font-size: 0.87rem; color: var(--text-muted); }
+  .agenda .a-num { width: 24px; height: 24px; border-radius: 50%; background: var(--tag-bg); color: var(--primary); font-weight: 800; font-size: 0.78rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .agenda b { color: var(--navy); }
+  .internalpath { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--tag-bg); border-radius: 8px; padding: 14px 18px; margin-bottom: 18px; }
+  .internalpath .ip-step { font-size: 0.78rem; color: var(--navy); background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 5px 12px; white-space: nowrap; }
+  .internalpath .ip-arrow { color: var(--text-faint); font-size: 0.8rem; }
+  .contactline { font-size: 0.84rem; color: var(--text-muted); }
+  .contactline b { color: var(--navy); }
+
+  footer { padding: 26px 40px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; color: var(--text-faint); font-size: 0.76rem; }
+</style>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-3 8.5-7 9.5C8 20.5 5 17 5 12V6l7-3z"/><path d="M9 12l2 2 4-4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.5-4.5"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c3 3 3 14 0 17-3-3-3-14 0-17z"/></symbol>
+  </defs>
+</svg>
+
+<div class="page">
+  <div class="topnav">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNDAgMTQwIiBoZWlnaHQ9IjE0MCIgd2lkdGg9IjE0MCI+PGRlZnM+PHN0eWxlPnBhdGh7ZmlsbDojZmFiZDE0fTwvc3R5bGU+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMxNDRjOTQiLz4KCTxwYXRoIGQ9Ik0xMC42OCAxMjkuNjJoNC42MzJjMi43MDcgMCAyLjg1NS0yLjUgMi44NTUtMy4zOTV2LTIuMTQ4YzAtMy4zMzMtMS45OTYtMy40NzctMy4wOTQtMy40NzdoLTQuMzk2em0xLjAyOC0uOTA0VjEyMS41aDMuNTM3YzEuNzIgMCAxLjg5NyAxLjY3NiAxLjg5NyAyLjE3OHYyLjM3Yy0uMDI0IDEuNjEtLjI2MyAyLjY2OC0yLjA3IDIuNjY4aC0zLjM2OCI+PC9wYXRoPgoJPHBhdGggZD0iTTIxLjAyMiAxMjMuMzA2aC0uOTQ4djYuMzEzaC45NDh6bTAtMi43MDZoLS45NDh2MS4wNDdoLjk0OFYxMjAuNiI+PC9wYXRoPgoJPHBhdGggZD0iTTI1LjUyMyAxMjguOTE3Yy0xLjA5NyAwLTEuNTktLjA1My0xLjU5LTEuMjU4IDAtMS4wMy40NTQtMS4wOTcgMS41OS0xLjA5NyAxLjIwNSAwIDEuOTA2LS4wMSAxLjkwNiAxLjE3NiAwIDEuMTUtLjk2IDEuMTczLTEuOTA4IDEuMTczem0yLjg4NC43MDJ2LTQuMzFjLjAxLTEuOTItMS4xNTYtMi4wOS0yLjc0Ni0yLjA4Mi0xLjQtLjAwNS0yLjUyLjEwNC0yLjUyIDEuNzI0di4xMzhoLjk4N3YtLjIyNWMtLjAxMi0uODY1LjkxLS44NjUgMS42NDgtLjg2NSAxLjA3MiAwIDEuNjkuMTA3IDEuNjkgMS4yNjR2MS4xNjZoLS4wNmMtLjEzNS0uNTgtMS4zNjQtLjY0LTEuOTg4LS42NC0xLjU2NyAwLTIuNDcuMjQ3LTIuNDcgMS45ODQgMCAxLjY1Ljk4OCAxLjkxNiAyLjQxIDEuOTE2Ljc5IDAgMS43Mi0uMDI2IDIuMDc1LS43NWwuMDMuMDN2LjY0N2guOTUiPjwvcGF0aD4KCTxwYXRoIGQ9Ik0zMy4wNTQgMTI4LjkxN2MtMS44MzcgMC0xLjczLS45MzQtMS43My0yLjQ0NSAwLTEuNjYtLjAxOC0yLjQ3IDEuNzMtMi40NyAxLjcwNyAwIDEuODMuNzEgMS44MyAyLjQ3IDAgMS40MDIgMCAyLjQ0NS0xLjgzIDIuNDQ1em0yLjc4LTUuNjFoLS45NDh2Ljc5NmwtLjAyNC4wMDZjLS4zNy0uNzU3LTEuMTU4LS44OC0yLjAzLS44OC0yLjE2OCAwLTIuNDk0IDEuMTM2LTIuNDk0IDMuMjQ0IDAgMi4xNi40NDggMy4yMiAyLjQ5MyAzLjIyLjc0MyAwIDEuNzctLjA4NiAyLjAzMy0uODVoLjAydjEuNDVjLS4wMDYgMS4yNDQtLjY5MiAxLjM2LTEuODI4IDEuMzYtLjk5NCAwLTEuNTcyLS4wNy0xLjU3Mi0xLjI5aC0uOTVjLS4wOTQgMS44MyAxLjA1NiAyLjA2IDIuNTIyIDIuMDYgMS41MyAwIDIuNzgtLjM2OCAyLjc4LTIuMDZ2LTcuMDUzIj48L3BhdGg+Cgk8cGF0aCBkPSJNMzguOTEyIDEyMy4zMDZoLS45NDh2Ni4zMTNoLjk0OHYtMy42ODNjMC0xLjQ1LjM0LTEuOTM2IDEuODktMS45MzYgMS4wNjggMCAxLjUxNS4xOSAxLjUxNSAxLjM1djQuMjY4aC45NDh2LTQuMmMuMDI0LTEuNzU4LS43NTUtMi4xOTMtMi4zNzctMi4xOTMtLjcyNSAwLTEuNjUyLjA4Ny0xLjk1Mi44NWgtLjAyNHYtLjc3Ij48L3BhdGg+Cgk8cGF0aCBkPSJNNDUuMjUgMTI2LjQ3MmMwIDIuNjUzLjQ1MyAzLjIyIDIuOCAzLjIyczIuODAyLS41NjcgMi44MDItMy4yMmMwLTIuNjcyLS40NTUtMy4yNC0yLjgwMi0zLjI0LTIuMzQ1IDAtMi44LjU2OC0yLjggMy4yNHptLjk4NiAwYzAtMi4yLjEyLTIuNDcgMS44MTQtMi40NyAxLjY5IDAgMS44MTQuMjcgMS44MTQgMi40NyAwIDIuMTgzLS4xMjMgMi40NDUtMS44MTQgMi40NDUtMS43IDAtMS44MTQtLjI2Mi0xLjgxNC0yLjQ0NSI+PC9wYXRoPgoJPHBhdGggZD0iTTU3LjgxNCAxMjQuNzFjMC0xLjQyNy0xLjM2LTEuNDgzLTIuNDctMS40ODMtMS43MDYgMC0yLjc1Ni4wNC0yLjc1NiAxLjg3IDAgMS43OSAxLjM5IDEuNjQzIDIuNzU3IDEuNzQ0IDEuMTU3LjA2NyAxLjY1LS4xNSAxLjY1IDEuMDMzIDAgMS4xMi0xLjAwMi45NzItMS42NS45NzItMS40NDMgMC0xLjgxNC0uMTMyLTEuODE0LS43M3YtLjQ5NWgtLjk4NnYuNTg0YzAgMS40MTMgMS40MzQgMS40ODIgMi44MDIgMS40ODIgMS40MTIgMCAyLjYzLS4wNyAyLjYzLTEuODUgMC0yLjA1Ni0xLjQ3My0xLjgtMy4xLTEuODk4LS45ODMtLjA0Ny0xLjMuMDQtMS4zLTEuMDk4IDAtLjc4LjU4LS43NjMgMS43Ny0uNzYzIDEuMDAzIDAgMS40OCAwIDEuNDguNjMydi4yNGguOTl2LS4yMzYiPjwvcGF0aD4KCTxwYXRoIGQ9Ik02My4xMjUgMTIzLjMwNmgtMi40NHYtMS41MjdoLS45NTh2MS41MjVoLS44NHYuNzdoLjg0djMuNzE1YzAgMS40ODMuMzQgMS44OTggMS44MiAxLjg5OCAxLjMgMCAxLjgxNS0uNTg1IDEuODE1LTEuODM3di0uNDY3aC0uOTAzdi40N2MwIC42MDcgMCAxLjA2Ny0uODkgMS4wNjctLjY5IDAtLjg3OC0uMTUzLS44ODYtLjg0di00LjAwM2gyLjQzOHYtLjc3Ij48L3BhdGg+Cgk8cGF0aCBkPSJNNjUuNjQ4IDEyMy4zMDZINjQuN3Y2LjMxM2guOTQ4em0wLTIuNzA2SDY0Ljd2MS4wNDdoLjk0OFYxMjAuNiI+PC9wYXRoPgoJPHBhdGggZD0iTTcyLjEgMTI3LjMzN3YuMzA2YzAgMS4xNDYtLjQzNiAxLjI3NC0xLjYyIDEuMjc0LTEuODU0IDAtMS45MjQtLjU0LTEuOTI0LTIuMzE1IDAtMi4wMi4wMjgtMi42IDEuNzItMi42IDEuMDg2IDAgMS43MTIuMDIgMS43MTIgMS4xNjZ2LjE5aC45NXYtLjE2NWMwLTEuNzk4LTEuMTk3LTEuOTY4LTIuNzI4LTEuOTY4LTIuMjgyIDAtMi42NDcgMS4wNS0yLjY0NyAzLjEwMiAwIDIuMzUuMTc3IDMuMzYgMi44MDUgMy4zNiAxLjUwMiAwIDIuNjc3LS4yMjQgMi42NzctMi4wMDZ2LS4zNDZoLS45NDgiPjwvcGF0aD4KCTxwYXRoIGQ9Ik04Mi40NjQgMTI1LjQ2YzEuNjQ0LjEzIDIuNDE2LS4xNTQgMi40MTYgMS41NiAwIDEuNzY3LS41MjIgMS43NjctMi40NSAxLjc2Ny0xLjkwNiAwLTIuMjkyIDAtMi4yNzItMS45ODRINzkuMTNjLS4xOCAyLjYwOCAxLjAwOCAyLjg4NSAzLjMgMi44ODUgMi4yNzIgMCAzLjQ3Ny0uMDgzIDMuNDc3LTIuNjI4IDAtMi40NDItMS4wODYtMi4zODYtMy4yMi0yLjUwMy0xLjY4NS0uMDQ1LTIuNTAzLjA5My0yLjUwMy0xLjYyOCAwLTEuMjU3LjI3Ni0xLjUwNCAyLjI3Ni0xLjUwNCAxLjkwNiAwIDIuMjEuMDU0IDIuMjUyIDEuNjRoMS4wMjhjLjEwOC0yLjQ1OC0xLjI5Ny0yLjU0Mi0zLjI1LTIuNTQyLTIuMjIgMC0zLjMyNC4yMTctMy4zMjQgMi42MjMgMCAyLjM4IDEuNTMgMi4xNjQgMy4zMDQgMi4zMTIiPjwvcGF0aD4KCTxwYXRoIGQ9Ik05Mi4xMDMgMTIzLjMwNmgtLjk4bC0xLjQxNiA1LjYxaC0uMDJsLTEuOTU2LTUuNjFoLS45N2wyLjI4NiA2LjMxM2guMzRjLS4yMTguNzE3LS4zMjYgMi4wNDUtMS4zMTQgMi4wNDVhMS41NzUgMS41NzUgMCAwIDEtLjM0LS4wNHYuNzM3Yy4xMzMuMDI0LjI3OC4wNi40MzYuMDYgMS41MiAwIDEuNzk4LTEuMTYyIDIuMTI4LTIuMzZsMS44MS02Ljc1NyI+PC9wYXRoPgoJPHBhdGggZD0iTTk4LjM5MiAxMjQuNzFjMC0xLjQyNy0xLjM1Ny0xLjQ4My0yLjQ3LTEuNDgzLTEuNzAzIDAtMi43NDYuMDQtMi43NDYgMS44NyAwIDEuNzkgMS4zODMgMS42NDMgMi43NDcgMS43NDQgMS4xNi4wNjcgMS42NTMtLjE1IDEuNjUzIDEuMDMzIDAgMS4xMi0uOTk2Ljk3Mi0xLjY1Mi45NzItMS40MzIgMC0xLjgxLS4xMzItMS44MS0uNzN2LS40OTVoLS45ODd2LjU4NGMwIDEuNDEzIDEuNDM0IDEuNDgyIDIuOCAxLjQ4MiAxLjQxNiAwIDIuNjQzLS4wNyAyLjY0My0xLjg1IDAtMi4wNTYtMS40ODItMS44LTMuMTAyLTEuODk4LS45ODgtLjA0Ny0xLjMwNC4wNC0xLjMwNC0xLjA5OCAwLS43OC41NzMtLjc2MyAxLjc2NC0uNzYzIDEuMDA4IDAgMS40ODIgMCAxLjQ4Mi42MzJ2LjI0aC45ODh2LS4yMzYiPjwvcGF0aD4KCTxwYXRoIGQ9Ik0xMDMuNzAzIDEyMy4zMDZoLTIuNDM4di0xLjUyN2gtLjk0OHYxLjUyNWgtLjg0MnYuNzdoLjg0djMuNzE1YzAgMS40ODMuMzQgMS44OTggMS44MTMgMS44OTggMS4zMDQgMCAxLjgxOC0uNTg1IDEuODE4LTEuODM3di0uNDY3aC0uOTAzdi40N2MwIC42MDcgMCAxLjA2Ny0uODkgMS4wNjctLjY5IDAtLjg2OC0uMTUzLS44ODQtLjg0di00LjAwM2gyLjQzNnYtLjc3Ij48L3BhdGg+Cgk8cGF0aCBkPSJNMTA5LjY0NiAxMjcuNzA2di4yMzdjMCAuODk3LS40MjUuOTc0LTEuNzIuOTc0LTEuNzA2IDAtMS44NTItLjI0Ni0xLjg1Mi0yLjI0Nmg0LjU0NHYtLjYzYzAtMi4zNC0uNjQ4LTIuODEtMi42OTMtMi44MS0yLjI2MiAwLTIuODQuNjIzLTIuODQgMy4yNDYgMCAyLjQuMzcgMy4yMiAyLjg0IDMuMjIgMS40MDMgMCAyLjY5My0uMDg2IDIuNjkzLTEuNzU0di0uMjN6bS0zLjU3Ni0xLjgwNWMuMDczLTEuNDUuMTM0LTEuODk1IDEuODU3LTEuODk1IDEuNDQyIDAgMS42Ni4xMDUgMS43MDMgMS44OTdoLTMuNTU2Ij48L3BhdGg+Cgk8cGF0aCBkPSJNMTEzLjUxMyAxMjMuMzA2aC0uOTV2Ni4zMTNoLjk1di0zLjc5NmMwLTEuMjkyLjY0OC0xLjgyMyAxLjg5Ni0xLjgyMyAxLjM3MyAwIDEuMzczLjU0IDEuNDEzIDEuMzg0djQuMjM0aC45NDh2LTMuODc0YzAtMS4zNi41NzQtMS43NDQgMS45MTgtMS43NDQgMS4yMjQgMCAxLjM4Mi40ODYgMS4zODIgMS41NXY0LjA2N2guOTU4di00LjE2YzAtMS41NjctLjU3My0yLjIzMy0yLjE5My0yLjIzMy0uODU2IDAtMS44My4yMTItMi4yNDQgMS4wNS0uMjI3LS44MzItMS4yLTEuMDQ2LTEuOTU1LTEuMDQ2LS44MDMgMC0xLjc2Ny4yMy0yLjA5NSAxLjA0OGgtLjAzNXYtLjk3MiI+PC9wYXRoPgoJPHBhdGggZD0iTTEyOS4xNTUgMTI0LjcxYzAtMS40MjctMS4zNTYtMS40ODMtMi40Ni0xLjQ4My0xLjcwNSAwLTIuNzU2LjA0LTIuNzU2IDEuODcgMCAxLjc5IDEuMzggMS42NDMgMi43NTQgMS43NDQgMS4xNTguMDY3IDEuNjUyLS4xNSAxLjY1MiAxLjAzMyAwIDEuMTItMSAuOTcyLTEuNjQ4Ljk3Mi0xLjQ0NCAwLTEuODE1LS4xMzItMS44MTUtLjczdi0uNDk1aC0uOTg4di41ODRjMCAxLjQxMyAxLjQzIDEuNDgyIDIuODAyIDEuNDgyIDEuNDAyIDAgMi42My0uMDcgMi42My0xLjg1IDAtMi4wNTYtMS40NzMtMS44LTMuMS0xLjg5OC0uOTktLjA0Ny0xLjMuMDQtMS4zLTEuMDk4IDAtLjc4LjU4LS43NjMgMS43Ny0uNzYzLjk5NiAwIDEuNDgzIDAgMS40ODMuNjMydi4yNGguOTh2LS4yMzYiPjwvcGF0aD4KCTxwYXRoIGQ9Ik0xNC45NTYgMzAuMzZ2MTguODloOS40NzhjNS4xNSAwIDUuODQ4LTIuNzIgNS45MjctNy41Mjh2LTUuMzI1YzAtMS41MzUtLjU2LTYuMDM2LTUuNC02LjAzNnoKCQltMTAuMjI3IDIyLjY2M2gtMTQuNDdWMjYuNTg4aDEzLjcyYzMuNTE0IDAgMTAuMTc2LjUxIDEwLjE3NiAxMS4wMDV2NC42NzhjMCAyLjYzNC0uNDQ0IDEwLjc1LTkuNDI2IDEwLjc1Ij48L3BhdGg+Cgk8cGF0aCBkPSJNMzggNTNWMzRsMiAyIDItMnYxOWgtNCI+PC9wYXRoPgoJPHBhdGggZD0iTTQwIDMwbDIgMi0yIDItMi0yIDItMnoiPjwvcGF0aD4KCTxwYXRoIGQ9Ik01MC43NzcgNDkuMjI0Yy42MjQuMzYzIDEuODM3LjU4NyA0LjIxMi41ODcgMi4zNyAwIDMuNTgtLjIxNiA0LjIwNi0uNTguNjM4LS4zNzcuNjUyLTEuMDIuNjUyLTEuODUzIDAtLjgyNS0uMDE1LTEuNDc1LS42NTMtMS44NDUtLjYyNi0uMzYyLTEuODM3LS42MjMtNC4yMDgtLjYyMy0yLjM3OCAwLTMuNTkuMjYtNC4yMTUuNjIzLS42MzMuMzctLjY2IDEuMDItLjY2IDEuODQ2IDAgLjgzLjAyNCAxLjQ3My42NTYgMS44NXptOS4wNTgtOS44MWMwLTEuNzU4LTEuNTgtMi00LjYwNy0yLTIuNTMgMC00LjY3Ny4wMzgtNC42NTMgMi4wMDR2LjQ1NWgtMy45ODN2LS4zNThjMC01LjE3NyA0LjQzLTUuNzA0IDguNjM0LTUuNjY1IDQuODQtLjA0IDguNjQ2LjYwMyA4LjY0NiA1LjY2NXYxMy41MjJoLTQuMDM3di0uNzljLTEuNTUuNzMtMi41NjIgMS4wMi00LjkwNyAxLjAxMy00Ljg5LS4wMjMtOC43OC0uNzg2LTguNzgtNS44ODggMC01LjA5NyAzLjg5Mi01Ljg4IDguNzg0LTUuODggMS43MjMgMCAzLjQ0My4yNyA0LjgxNy42M2wuMDktMi43MDYiPjwvcGF0aD4KCTxwYXRoIGQ9Ik03Ny45ODMgNTMuMjA3Yy02Ljk3NSAwLTExLjQyNC0uNzEtMTEuMjQyLTcuNjcyaDQuNDU3Yy4wOCAyLjE3My40MSAyLjg4NS45ODggMy4yNTYuODU3LjU2IDIuNjI0LjU5IDUuNzk3LjU5IDYuMjI0IDAgNy4xOC0uMDI1IDcuMTgtNC4yNTMgMC0yLjI2Mi0uNTUzLTIuODg1LTEuNDQyLTMuMTk1LS41NC0uMTg0LTEuMjU4LS4yNy0yLjIzMi0uMzIzLS45NjgtLjA1LTIuMDgzLS4xLTMuNDMyLS4xNjdhMTcwLjc2NCAxNzAuNzY0IDAgMCAxLTMuMjY2LS4xNzdsLS41NzMtLjA0Ny0uMjItLjAxN2MtMS4yNzQtLjEwNi0yLjQ5NS0uMjc2LTMuNTQ0LS42NzctMi4yMy0uODMtMy41NzUtMi44MjYtMy41NzUtNi4zNSAwLTcuMzUgMy45MjItNy43NCAxMC45OS03Ljc0IDYuMDUzIDAgMTEuMzQ2LjE2NiAxMC45OTggNy42NmgtNC4yMjhDODQuNSAzMC41MiA4My42MyAzMC4yNiA3Ny45NiAzMC4yNmMtNi4zNjIgMC02LjY5OC42Ny02LjY5OCAzLjUxMiAwIDIuMjUyLjc3OCAyLjg3OCAxLjc0MiAzLjI1NS41NjMuMjE4IDEuMzEyLjMyNSAyLjMuMzguOTk1LjA1MyA2LjIzLjMzMiA4LjA0LjQzOCAxLjQ0My4wOTMgMi40OC40MTUgMy40NC44OTUgMi4wNSAxLjAwOCAyLjY2NiAyLjk4NCAyLjY2NiA2LjQ4IDAgNy43OC00LjMwNyA3Ljk4My0xMS40NzUgNy45ODMiPjwvcGF0aD4KCTxwYXRoIGQ9Ik05OC44OTYgNjAuNTUzdi0xMS4wNkw4OS4yNTQgMzQuMTRoNC41bDcuMjY0IDExLjYyNiA3LjI2LTExLjYyM2g0LjQ5bC05LjY0OCAxNS4zNy4wMTYgMTEuMDQ2aC00LjI0NCI+PC9wYXRoPgoJPHBhdGggZD0iTTEwNS45MiAzNC4xNGwtNC45IDcuODQ1LTQuOTA0LTcuODQ0aDkuOCI+PC9wYXRoPgoJPHBhdGggZD0iTTExNi41IDQ4LjE3Yy4wMDguMjguMDUzLjUyMi4yNTcuNzNhMS4wODcgMS4wODcgMCAwIDAgLjMyMi4yNTdjLjU2LjMwNiAxLjY1Ny40NDQgMy43OTUuNDQ0czMuMjI1LS4xNTIgMy43OTgtLjQ0NGMuMzMyLS4xNjYuNDg2LS41NzMuNTYzLS45My4wNy0uMzU1LjA3LS42OS4wNy0uNzU4IDAtMS42MjgtLjQzNi0xLjg5Ni0uODUtMi4wNi0uMjkzLS4xMDctLjc5NS0uMTU0LTEuMjktLjE3OC0xLjkzLS4xMTYtNC4wNS0uMTctNC45NjItLjI0Ni0uOTItLjA4Ny0xLjgzLS4yMjctMi42MjQtLjUzNC0xLjY4Mi0uNjUyLTIuODkzLTIuMDM1LTIuODkzLTQuNzYgMC01Ljc1IDQuNjIzLTUuODE2IDguMDAyLTUuODE2IDIuOTIyIDAgNy45OTUuMDU2IDcuOTk1IDQuNzIydjEuMTI2aC0zLjk0M3YtMS4xMjZjMC0xLjE0LS45OC0xLjI1Ni00LjA1LTEuMjU2LTEuNDQ3IDAtMi40NSAwLTMuMDk3LjE1OC0uNjU3LjE1OC0uOTY4LjQ3NC0uOTY4IDEuMTA2djEuMjkybC4wMi4zMTZhMS42OCAxLjY4IDAgMCAwIC4wODMuNDU1Yy4xMS4zMTYuMzI1LjYxOC43ODIuNjkuMTQ2LjAyLjM0NS4wNi41NjMuMDY4bDUuMDI0LjI0NWMxLjE2NC4wNTQgMi4xMy4xNjIgMy4wMDcuNDggMS44Ni42NyAzLjEyNiAyLjE5MiAzLjEyNiA1LjI3OCAwIDUuNjAzLTQuNTE1IDUuNzczLTguMzkgNS43NzMtMy42MjcgMC04LjM4LS4xMDctOC4zOC00Ljcydi0xLjI4NGg0LjAzYzAgLjIxLS4wMS44My4wMDYuOTY4Ij48L3BhdGg+Cjwvc3ZnPg==" alt="DiaSys Diagnostic Systems" />
+    <div class="jumplinks">
+      <a href="#s1" title="Ausgangslage">1</a>
+      <a href="#s2" title="Umfang">2</a>
+      <a href="#s3" title="Relaunch-Investition">3</a>
+      <a href="#s4" title="Laufende Leistungen">4</a>
+      <a href="#s5" title="Zeitplan">5</a>
+      <a href="#s6" title="Nicht enthalten">6</a>
+      <a href="#s7" title="Nächster Schritt">7</a>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="inner">
+      <span class="createdbadge">✎ Erstellt zur Vorbereitung Ihrer internen Abstimmung</span>
+      <h1 class="title">Ihr Website-Relaunch: Leistungen, Kosten und Zeitplan im Überblick</h1>
+      <p class="subtitle">Transparentes Handbuch für DiaSys Diagnostic Systems GmbH — auf Basis unseres Gesprächs sowie der Angebote AG1464, AG1466 und AG1467, damit Sie die Kalkulation intern sauber durchsprechen und Ihre Budgetgespräche vorbereiten können.</p>
+      <div class="metarow">
+        <div class="metabox"><div class="m-lbl">Relaunch — Gesamtinvestition</div><div class="m-val">165.000 € netto</div><div class="m-sub">zzgl. 19 % USt., einmalig</div></div>
+        <div class="metabox"><div class="m-lbl">Laufende Kosten ab Go-live</div><div class="m-val">4.990 € / Monat netto</div><div class="m-sub">Wartung & Pflege + SEO & GEO zusammen</div></div>
+        <div class="metabox"><div class="m-lbl">Nächster Termin</div><div class="m-val">Mo., 12.10.2026 · 11:00 Uhr</div><div class="m-sub">Google Meet</div></div>
+      </div>
+      <div class="persona">
+        <div class="avatar">NB</div>
+        <div><div class="p-name">Noah Becker</div><div class="p-role">Ihr Ansprechpartner · Becker Media & Consulting</div></div>
+      </div>
+    </div>
+  </header>
+
+  <section id="s1">
+    <div class="section-head"><span class="eyebrow">01 · Ausgangslage</span><h2>Viel Substanz hinter einer in die Jahre gekommenen Seite</h2></div>
+    <div class="tilegrid">
+      <div class="tile"><div class="t-icon"><svg class="icon"><use href="#i-layers"/></svg></div><h3>TYPO3, nicht mehr zeitgemäß</h3><p>Die bestehende Seite ist technisch und optisch veraltet — dahinter stecken aber umfangreiche Datenbanken.</p></div>
+      <div class="tile"><div class="t-icon"><svg class="icon"><use href="#i-database"/></svg></div><h3>Großer Datenpool</h3><p>Über 8.000 Packungsbeilagen sowie umfangreiche Produkt- und Reagenzieninformationen für Kunden.</p></div>
+      <div class="tile"><div class="t-icon"><svg class="icon"><use href="#i-shield"/></svg></div><h3>Geschützter Bereich nötig</h3><p>Sensible Unterlagen sind nur für geprüfte Distributoren und Partner zugänglich — Konkurrenzschutz.</p></div>
+    </div>
+    <div class="quotes-wrap">
+      <div class="quote-block">
+        <p class="qtext">„Unser Ziel der Homepage bzw. der Grundstock der Homepage ist es, dass all unsere Kunden Packungsbeilagen, Anwendungen für ihre Analyzer, zusätzliche Reagenzieninformation … Es ist eigentlich wie ein großes Wikipedia für unsere Kunden."</p>
+        <div class="qattr"><span class="srctag transcript">Aus eurem Gespräch</span> Setting-Call, 25.09.2026 — Verena Maxeiner, zum Hauptzweck der Website</div>
+      </div>
+      <div class="quote-block">
+        <p class="qtext">„Wenn wir es mit Ihnen machen würden, würden wir es wahrscheinlich komplett neu machen, weil bis Sie da wirklich durchgestiegen sind, was da bei uns alles dahinter steckt, sind wir wahrscheinlich besser, wenn wir es komplett neu bauen."</p>
+        <div class="qattr"><span class="srctag transcript">Aus eurem Gespräch</span> Setting-Call, 25.09.2026 — Yvonne Voigt</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s2">
+    <div class="section-head"><span class="eyebrow">02 · Umfang im Detail</span><h2>Rund 567 Seiten — Hauptseite und 6 Microsites</h2></div>
+    <div class="scope-two">
+      <table class="scopetable">
+        <tr><th>diasys-diagnostics.com</th><th class="num">Seiten (geschätzt)</th></tr>
+        <tr><td>Produkt-/Reagenzseiten</td><td class="num">180–280</td></tr>
+        <tr><td>Analyzer / Instrumente / Systeme</td><td class="num">20–40</td></tr>
+        <tr><td>Unternehmensseiten</td><td class="num">30–50</td></tr>
+        <tr><td>News + Newsdetailseiten</td><td class="num">60–100</td></tr>
+        <tr><td>Service / Dokumente / Support</td><td class="num">30–50</td></tr>
+        <tr><td>Karriere / Verantwortung / Sonstiges</td><td class="num">20–40</td></tr>
+        <tr><td>Suche, Sonderseiten etc.</td><td class="num">10–30</td></tr>
+        <tr class="total"><td>Gesamt Hauptseite</td><td class="num">≈ 500</td></tr>
+      </table>
+      <table class="scopetable">
+        <tr><th>Microsite</th><th class="num">Seiten</th></tr>
+        <tr><td>procalcitonin.de</td><td class="num">13</td></tr>
+        <tr><td>hba1cnet.com</td><td class="num">14</td></tr>
+        <tr><td>metabolic-syndrome.de</td><td class="num">6</td></tr>
+        <tr><td>lp-pla2.de</td><td class="num">9</td></tr>
+        <tr><td>diasys-ddimer.com</td><td class="num">8</td></tr>
+        <tr><td>total-bile-acids.com</td><td class="num">17</td></tr>
+        <tr class="total"><td>Gesamt Microsites</td><td class="num">67</td></tr>
+      </table>
+    </div>
+    <p class="section-note"><span class="srctag transcript">Aus eurer Kalkulationsgrundlage</span> Zusammen ≈ 567 HTML-Seiten — die Basis, auf der die gesamte Kalkulation in Angebot AG1464 aufbaut.</p>
+    <div class="findingbox" style="margin-top:14px;">
+      <div class="f-icon"><svg class="icon"><use href="#i-globe"/></svg></div>
+      <div>
+        <p>Zweisprachigkeit wird komplett gespiegelt (nicht per Übersetzungs-Plugin) — auf Ihren ausdrücklichen Wunsch, da Ihre Kunden überwiegend international sind.</p>
+        <div class="qattr"><span class="srctag transcript">Aus eurem Gespräch</span> Setting-Call, 25.09.2026 — Verena Maxeiner: „Auch wenn das teurer ist. Aber tatsächlich ist das aktuell auch so, dass es komplett gespiegelt ist und das würde ich auch beibehalten."</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s3">
+    <div class="section-head"><span class="eyebrow">03 · Investition — Website-Relaunch</span><h2>13 Positionen, 825 Stunden, 4 Projektphasen</h2></div>
+    <p class="section-note">Grundlage: Stundensatz 200,00 € netto. Der Festpreis gilt unabhängig von der gewählten Plattform — WordPress oder individuelle Eigenentwicklung kosten identisch; die Entscheidung fällt gemeinsam im Onboarding. <span class="srctag offertag">Angebot AG1464</span></p>
+
+    <div class="phase-block">
+      <div class="phase-head"><h4>Strategie & Design</h4><span class="phase-meta">151 Std. · 30.200 € · 18,3 %</span></div>
+      <table class="postable">
+        <tr><td class="pos">1</td><td class="desc"><b>Strategie, Konzeption & Planung</b><span>Kick-off-Workshop, Zielgruppenanalyse, Bestandsaufnahme aller Seiten, neue Seitenstruktur, Migrationskonzept</span></td><td class="hrs">57 Std.</td><td class="price">11.400 €</td></tr>
+        <tr><td class="pos">2</td><td class="desc"><b>UX/UI-Design im Corporate Look</b><span>Startseite + bis zu 15 Seitenvorlagen, Designsystem, responsive, Prototyp mit 2 Korrekturschleifen</span></td><td class="hrs">94 Std.</td><td class="price">18.800 €</td></tr>
+      </table>
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-head"><h4>Entwicklung & Datenbanken</h4><span class="phase-meta">370 Std. · 74.000 € · 44,9 %</span></div>
+      <table class="postable">
+        <tr><td class="pos">3</td><td class="desc"><b>Entwicklung & Seitenvorlagen</b><span>WordPress oder Eigenentwicklung, zweisprachige Struktur (DE/EN), Datenbank-Anbindung, Formulare</span></td><td class="hrs">130 Std.</td><td class="price">26.000 €</td></tr>
+        <tr><td class="pos">4</td><td class="desc"><b>Produktdatenbank</b><span>Datenmodell für Reagenzien, Analyzer, Instrumente; Import & automatische Produktseiten</span></td><td class="hrs">90 Std.</td><td class="price">18.000 €</td></tr>
+        <tr><td class="pos">5</td><td class="desc"><b>Dokumentendatenbank</b><span>IFU, Sicherheitsdatenblätter, Zertifikate, Broschüren — Download-Bereich mit Filtern</span></td><td class="hrs">67 Std.</td><td class="price">13.400 €</td></tr>
+        <tr><td class="pos">6</td><td class="desc"><b>Geschützter interner Bereich</b><span>Login mit Nutzerrollen für Distributoren, Partner, Mitarbeiter; geprüfte Registrierung</span></td><td class="hrs">50 Std.</td><td class="price">10.000 €</td></tr>
+        <tr><td class="pos">7</td><td class="desc"><b>Leistungsfähige Suche & Filter</b><span>Suche über die gesamte Website inkl. Produkte & Dokumente, Filter nach Kategorie/Sprache</span></td><td class="hrs">33 Std.</td><td class="price">6.600 €</td></tr>
+      </table>
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-head"><h4>Migration & Inhalte</h4><span class="phase-meta">186 Std. · 37.200 € · 22,5 %</span></div>
+      <table class="postable">
+        <tr><td class="pos">8</td><td class="desc"><b>Datenmigration</b><span>Übernahme von ca. 500 Seiten, teilautomatisierter Import, vollständige Qualitätskontrolle</span></td><td class="hrs">96 Std.</td><td class="price">19.200 €</td></tr>
+        <tr><td class="pos">9</td><td class="desc"><b>Integration der Microsites & Weiterleitungen</b><span>6 Microsites, 301-Weiterleitungen je alter Seite, Absicherung der Google-Rankings</span></td><td class="hrs">24 Std.</td><td class="price">4.800 €</td></tr>
+        <tr><td class="pos">10</td><td class="desc"><b>Content Creation</b><span>SEO-Texte für Kernseiten in DE/EN, 1 Fototag inkl. Teambilder, Icons & Infografiken</span></td><td class="hrs">66 Std.</td><td class="price">13.200 €</td></tr>
+      </table>
+    </div>
+
+    <div class="phase-block">
+      <div class="phase-head"><h4>Technik, Tests & Steuerung</h4><span class="phase-meta">118 Std. · 23.600 € · 14,3 %</span></div>
+      <table class="postable">
+        <tr><td class="pos">11</td><td class="desc"><b>Technische Umsetzung, Sicherheit & Compliance</b><span>Ladezeiten, technisches SEO, BFSG/DSGVO inkl. Cookie-Banner, Backups & Überwachung</span></td><td class="hrs">38 Std.</td><td class="price">7.600 €</td></tr>
+        <tr><td class="pos">12</td><td class="desc"><b>Tests, Schulung & Go-Live</b><span>Tests auf allen Endgeräten, WCAG 2.1 AA-Prüfung, Schulung Ihres Teams, gemeinsames Go-Live</span></td><td class="hrs">42 Std.</td><td class="price">8.400 €</td></tr>
+        <tr><td class="pos">13</td><td class="desc"><b>Projektmanagement</b><span>Fester Ansprechpartner, Zeitplan, Steuerung der Freigabeprozesse für regulierte Inhalte</span></td><td class="hrs">38 Std.</td><td class="price">7.600 €</td></tr>
+      </table>
+    </div>
+
+    <div class="totalbar">
+      <div><div class="tb-lbl">825 Stunden gesamt</div><div class="tb-val">165.000 € <span>netto</span></div></div>
+      <div style="text-align:right;"><div class="tb-lbl">Umsatzsteuer</div><div class="tb-val">zzgl. 19 % <span>USt.</span></div></div>
+    </div>
+
+    <p class="section-note" style="margin-top:18px;">Zahlungsplan — 4 Raten (netto), unabhängig vom Projektfortschritt fällig (Zahlungsziel: 14 Tage nach Rechnungsstellung):</p>
+    <div class="ratengrid">
+      <div class="rate"><div class="r-pct">40 %</div><div class="r-val">66.000 € netto</div><div class="r-when">bei Auftragserteilung</div></div>
+      <div class="rate"><div class="r-pct">30 %</div><div class="r-val">49.500 € netto</div><div class="r-when">2 Monate nach Auftragserteilung</div></div>
+      <div class="rate"><div class="r-pct">20 %</div><div class="r-val">33.000 € netto</div><div class="r-when">4 Monate nach Auftragserteilung</div></div>
+      <div class="rate"><div class="r-pct">10 %</div><div class="r-val">16.500 € netto</div><div class="r-when">mit Go-live der Website</div></div>
+    </div>
+  </section>
+
+  <section id="s4">
+    <div class="section-head"><span class="eyebrow">04 · Investition — laufend nach Go-live</span><h2>Zwei unabhängige, monatliche Leistungen</h2></div>
+    <div class="offergrid">
+      <div class="offer">
+        <span class="o-tag">Monatlich · Angebot AG1467</span>
+        <h3>Wartung, Sicherheit & Pflege</h3>
+        <div class="o-price">1.490&nbsp;€<span>&nbsp;/Monat netto</span></div>
+        <ul>
+          <li>Updates von Website, Theme & Plugins inkl. Funktionstest</li>
+          <li>Firewall, Malware-Scans, 24/7 Security-Monitoring</li>
+          <li>Tägliche Backups, 30 Tage Aufbewahrung</li>
+          <li>Fester Ansprechpartner, Reaktionszeit 4 Std. bei Ausfall</li>
+          <li>Monatlicher Bericht, jährliche DSGVO-/BFSG-Prüfung</li>
+          <li>4 Std./Monat Pflege & Anpassungen (verfallen bei Nichtnutzung)</li>
+        </ul>
+        <div class="o-note">Ohne Hosting — läuft weiterhin bei Ihnen inhouse, Ihr ausdrücklicher Wunsch. Mindestlaufzeit 12 Monate. Zusätzliche Stunden: 200 €/Std. netto.</div>
+      </div>
+      <div class="offer">
+        <span class="o-tag">Monatlich · Angebot AG1466</span>
+        <h3>SEO & GEO</h3>
+        <div class="o-price">3.500&nbsp;€<span>&nbsp;/Monat netto</span></div>
+        <ul>
+          <li>Keyword-, Wettbewerbs- & Sichtbarkeitsanalyse (Monat 1)</li>
+          <li>Laufendes Ranking-Monitoring, monatlicher Bericht, Quartals-Call</li>
+          <li>Technisches SEO: Crawling, Indexierung, Core Web Vitals</li>
+          <li>2 SEO-/GEO-Fachbeiträge/Monat (DE+EN, je 1.000–1.500 Wörter)</li>
+          <li>GEO-Optimierung für ChatGPT, Perplexity, Google AI Overviews</li>
+          <li>Laufende OnPage-Optimierung bestehender Seiten</li>
+        </ul>
+        <div class="o-note">Mindestlaufzeit 12 Monate, danach automatische Verlängerung um je 12 Monate (Kündigungsfrist 3 Monate zum Laufzeitende).</div>
+      </div>
+    </div>
+    <p class="section-note">Zusammen: 4.990 € netto pro Monat ab Go-live (zzgl. 19 % USt.). Beide Leistungen sind unabhängig voneinander buchbar — Hosting ist in keiner der beiden Leistungen enthalten, da es auf Ihren ausdrücklichen Wunsch weiterhin bei Ihnen inhouse läuft.</p>
+  </section>
+
+  <section id="s5">
+    <div class="section-head"><span class="eyebrow">05 · Zeitplan</span><h2>Ca. 6 Monate ab Auftragserteilung</h2></div>
+    <div class="roadmap">
+      <div class="rstep"><div class="node"><svg class="icon"><use href="#i-target"/></svg></div><div class="when">Monat 1</div><h3>Strategie & Kick-off</h3><p>Konzeption, Struktur, Migrationsplan</p></div>
+      <div class="rstep"><div class="node"><svg class="icon"><use href="#i-layers"/></svg></div><div class="when">Monat 2</div><h3>Design & Freigabe</h3><p>UX/UI, Prototyp, Korrekturschleifen</p></div>
+      <div class="rstep"><div class="node"><svg class="icon"><use href="#i-database"/></svg></div><div class="when">Monat 3–4</div><h3>Entwicklung</h3><p>Seitenvorlagen, Datenbanken, geschützter Bereich</p></div>
+      <div class="rstep"><div class="node"><svg class="icon"><use href="#i-globe"/></svg></div><div class="when">Monat 4–5</div><h3>Migration & Content</h3><p>Datenübernahme, Microsites, Texte & Fotos</p></div>
+      <div class="rstep"><div class="node"><svg class="icon"><use href="#i-check"/></svg></div><div class="when">Monat 6</div><h3>Tests & Go-live</h3><p>Prüfung, Schulung, gemeinsame Freigabe</p></div>
+    </div>
+    <p class="section-note">Der verbindliche Fertigstellungstermin wird gemeinsam im Onboarding festgelegt.</p>
+  </section>
+
+  <section id="s6">
+    <div class="section-head"><span class="eyebrow">06 · Zur Transparenz</span><h2>Was ausdrücklich nicht enthalten ist</h2></div>
+    <div class="exgrid">
+      <div class="exbox">
+        <h4>Website-Relaunch (AG1464)</h4>
+        <ul>
+          <li>Übersetzungen in weitere Sprachen außer Deutsch/Englisch</li>
+          <li>Neue Texte für Produktseiten (bestehende werden übernommen)</li>
+          <li>Lizenzkosten für Plugins/Software von Drittanbietern</li>
+          <li>Hosting — läuft auf Ihren Wunsch weiterhin bei Ihnen inhouse</li>
+          <li>Reisekosten außerhalb 100 km</li>
+          <li>Zusatzleistungen außerhalb des Umfangs: 200 €/Std. netto</li>
+        </ul>
+      </div>
+      <div class="exbox">
+        <h4>SEO & GEO (AG1466)</h4>
+        <ul>
+          <li>Bezahlte Werbung (z. B. Google Ads) inkl. Werbebudget</li>
+          <li>Kostenpflichtiger Linkaufbau</li>
+          <li>Übersetzungen in weitere Sprachen</li>
+          <li>Neue Foto-/Videoproduktion</li>
+          <li>Lizenzkosten für Stockfotos/Tools von Drittanbietern</li>
+        </ul>
+      </div>
+    </div>
+    <div class="findingbox" style="margin-top:16px;">
+      <div class="f-icon"><svg class="icon"><use href="#i-check"/></svg></div>
+      <div>
+        <p>Mitwirkungspflicht: Sie stellen Inhalte, Daten, Zugänge und fachliche Freigaben rechtzeitig zur Verfügung — Freigaben jeweils innerhalb von 5 Werktagen nach Vorlage. Das betrifft vor allem Produktdaten, Dokumente, Bildmaterial und Zugänge zur bestehenden Website.</p>
+        <div class="qattr"><span class="srctag offertag">Angebot AG1464</span> — relevant für Ihre interne Ressourcenplanung</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s7" style="border-bottom:none;">
+    <div class="section-head"><span class="eyebrow">07 · Nächster Schritt</span><h2>Ihr Weg bis zur Budgetentscheidung</h2></div>
+    <div class="nextmeet"><span>Nächster Termin mit uns</span><b>Montag, 12.10.2026 · 11:00 Uhr · Google Meet</b></div>
+    <div class="internalpath">
+      <span class="ip-step">Vorbesprechung intern (KW 40/41)</span>
+      <span class="ip-arrow">→</span>
+      <span class="ip-step">Rückmeldung & Rückfragen mit uns, 12.10.</span>
+      <span class="ip-arrow">→</span>
+      <span class="ip-step">Budgetmeeting Geschäftsleitung, 20.11.</span>
+    </div>
+    <ul class="agenda">
+      <li><span class="a-num">1</span><span><b>Angebot besprechen:</b> alle drei Angebote gemeinsam durchgehen.</span></li>
+      <li><span class="a-num">2</span><span><b>Rückfragen klären:</b> Umfang, Plattformwahl, Bildmaterial (Fotoshooting als Option kalkuliert).</span></li>
+      <li><span class="a-num">3</span><span><b>Richtung für die weitere Vorgehensweise</b> festlegen — als Grundlage für Ihr Budgetmeeting am 20.11.</span></li>
+    </ul>
+    <p class="contactline">Fragen vorab? <b>Noah Becker</b> · Becker Media &amp; Consulting · 06172-8039998 · management@becker-media-consulting.de</p>
+  </section>
+
+  <footer>
+    <span>DiaSys Diagnostic Systems GmbH · Holzheim</span>
+    <span>Erstellt von Becker Media &amp; Consulting</span>
+  </footer>
+</div>
